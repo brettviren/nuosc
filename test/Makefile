@@ -1,6 +1,6 @@
 CXX = g++
 LIBS = -L.. -lnuosc++ -lblitz -lm
-CXXFLAGS = -I.. -g  -Wall
+CXXFLAGS = -I.. -g  -Wall -Wno-unused
 
 
 %-test: %-test.o 
@@ -10,4 +10,4 @@ CXXFLAGS = -I.. -g  -Wall
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 clean:
-	rm -f *.test *.o *~
+	rm -f *-test *.o *~

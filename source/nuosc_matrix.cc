@@ -1,9 +1,10 @@
 #include "nuosc_matrix.h"
+#include "constants.h"
 
 ComplexMatrix cp_phase_matrix(double phi)
 {
     ComplexMatrix k(3,3);
-    k = 0;
+    k = complex<double>(0,0);
 
     k(0,0) = complex<double>(cos(phi),sin(phi));
     k(1,1) = 1;
@@ -17,7 +18,7 @@ ComplexMatrix cp_phase_matrix(double phi)
 ComplexMatrix rotation_matrix(int i, int j, double angle)
 {
     ComplexMatrix r(3,3);
-    r = 0;
+    r = complex<double>(0,0);
 
     int k = 6-i-j;
 
@@ -37,9 +38,9 @@ ComplexMatrix rotation_matrix(int i, int j, double angle)
 }
 
 ComplexMatrix mixing_matrix(double theta12,
-                                   double theta23,
-                                   double theta13,
-                                   double cp_phase)
+                            double theta23,
+                            double theta13,
+                            double cp_phase)
 {
 
     ComplexMatrix K = cp_phase_matrix(cp_phase);
@@ -73,11 +74,9 @@ ComplexMatrix mass_squared_matrix(double dm2_21, double dm2_31)
 ComplexMatrix mass_state_transport_matrix(double dm2sol, double dm2atm,
                                           double energy, double distance)
 {
-    // hbar*c in eV*cm
-    const double hbarc = 1.9732696e-05;
-    const complex<double> EYE(0,1);
 
     ComplexMatrix T(3,3);
+    T = complex<double>(0,0);
 
     T(0,0) = 1.0;
     T(1,1) = exp(-0.5*EYE*dm2sol*distance/(energy*hbarc));

@@ -14,6 +14,7 @@ OscParam::OscParam(double dm2_21, double dm2_31,
     , m_theta_13(theta_13)
     , m_delta_cp(delta_cp)
     , m_dirty_mixing(true)
+    ,m_mixing_matrix(3,3)
 {
 }
 OscParam::~OscParam()
