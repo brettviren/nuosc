@@ -1,4 +1,4 @@
-CXX = g++ -pg  -fprofile-arcs 
+CXX = g++ # -pg  -fprofile-arcs 
 LIBS =  -lblitz -lm 
 CXXFLAGS = -I.. -g  -Wall -Wno-unused -O2 
 
