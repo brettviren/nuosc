@@ -95,44 +95,103 @@ nu/antinu issues.  This is how nuosc_prob.cc functions behave.
 Command line interface.
 =======================
 
-There exists a command line program, "genprob" (in main/) which gives
-access to all these calculations.  Simply running it w/out any args
-will produce this help:
+There exists two command line programs, "genprob" and the newer
+"nuosc" (in main/) which give access to all these calculations.  The
+former is deprecated in favor of the latter.
 
-usage: genprob [-e|--energy <energy> [GeV] default = 1 GeV]
-               [-b|--baseline <baseline> [km] default = 1 km]
-               [-E|--energy-range <Estart Estop Estep> [GeV] ...]
-               [-B|--baseline-range <Bstart Bstop Bstep> [km] ...]
-               [-t|--theta <theta_12 theta_23 theta_13> degrees ...]
-               [-S|--sin <sin^2(2theta_12) sin^2(2theta_23) sin^2(2theta_13)> ...]
-               [-s|--sol <dm2_sol = dm2_21 in eV^2> default = 5.0e-5 eV^2]
-               [-a|--atm <dm2_atm = dm2_31 in eV^2> default = 2.5e-3 eV^2]
-               [-d|--delta <CP phase in deg> default = 0]
-               [-n|--neutrino <nu number> nue=1,numu=2,nutau=3, anti *= -1]
-               [-D|--density <constant density in g/cm^3> default = 0. <0 => PREM]
-               [-c|--calculation <calculation type> "matrix"(def), "step"] 
+Simply running it w/out any args will produce a usage summary or run
+with "nuosc -h" to get a detailed explanation of the command line
+flags.
 
-Note that the units are different ([angle]=degrees, [energy]=GeV,
-[distance]=km) than the underlying code uses and are given in the help
-message.
+shell> nuosc -h
+Option summary:
+usage: nuosc [-n|--neutrino <initial neutrino number>]
+             [-e|--energy <energy range description>]
+             [-b|--baseline <baseline range description>]
+             [-m|--mixing <mixing angle description>]
+             [-s|--sol <delta m^2_solar (dm^2_21)>]
+             [-a|--atm <delta m^2_atm (dm^2_31)>] [-d|--delta <CP phase>]
+             [-D|--density <density description>]
+             [-c|--calculation <calculation description] [-h|--help] 
+
+Options details:
+[-n|--neutrino <initial neutrino number>]
+	Sets the initial neutrino e,mu,tau = 1,2,3; anti *= -1
+	Default is 2 (mu)
+
+[-e|--energy <energy range description>]
+	Describe the energy range.  Can be one of:
+		Linear energy range:      "lin:start,stop,step"
+		Logarithmic energy range: "log:start,stop,step"
+		A single energy value:    "one:energy"
+	Linear energy units are in GeV,
+	Logarithmic values give 10^start GeV - 10^stop GeV,
+	Default is "one:1"
+
+[-b|--baseline <baseline range description>]
+	Describe the baseline range.  Can be one of:
+		Linear disance range:       "lin:start,stop,step"
+		Logarithmic distance range: "log:start,stop,step"
+		A single distance value:    "one:distance"
+		Zenith angle:               "zen:start,stop,step[,depth]"
+		cos(Zenith angle):          "cos:start,stop,step[,depth]"
+	Distance units are km, angle units are degrees.
+	Logarithmic values give 10^start km - 10^stop km,
+	The "depth" value for zenith related gives detector depth (def=0),
+	Default is "one:1".
+
+[-m|--mixing <mixing angle description>]
+	Set the mixing angles description.  Can be one of:
+		Angles:        "ang:theta_12,theta_23,theta_13"
+		Sin^2(2theta): "sin:sin^2(2t_12),sin^2(2t_23),sin^2(2t_13)"
+	Angle units are in degrees, default "sin:0.8,1.0,0.1"
+
+[-s|--sol <delta m^2_solar (dm^2_21)>]
+	Set the solar delta-m^2 (dm^2_21).
+	Units are eV^2, default is 2.5e-3 eV^2
+
+[-a|--atm <delta m^2_atm (dm^2_31)>]
+	Set the atmospheric delta-m^2 (dm^2_31).
+	Units are eV^2, default is 5.0e-5 eV^2
+
+[-d|--delta <CP phase>]
+	Set the CP phase angle.
+	Units are degrees, default is 0 degrees
+
+[-D|--density <density description>]
+	Set the density description.  Can be one of:
+		Constant density: "con:density"
+		PREM density:     "prem"
+		Lookup table:     "lut:filename"
+	Density is in g/cc.
+	The lookup text file has columns of bin centered position and density
+	Default is "con:0.0"
+
+[-c|--calculation <calculation description]
+	Set the calculation description.  Can be one of:
+		Matrix method: "matrix"
+		Full stepping: "step"
+	Default is "matrix"
+
+[-h|--help]
+	Print this message
+
 
 The ouput is 
 
 	<energy> <baseline> <P(nux->nue)> <P(nux->numu)> <P(nux->nutau)>
 
-If one uses -e a single energy will be calculated and with -E, a range
-of energies will be calculated with one line of output per energy.
-Similarly a single baseline is specified with -b and a range with -B.
+Notes:
 
-Either mixing angles or the corresponding sin^2(2theta)'s can be
-specified.  Internally angles are used.  Default is SK atmospheric
-best fit point, LMA and CHOOZ limit at SK best fit point.
+ - The units are different ([angle]=degrees, [energy]=GeV,
+ [distance]=km) than the underlying code uses and are given in the
+ help message.
 
-The initial neutrino is specified as nue=1, numu=2 and nutau=3.  The
-same is used for anti-neutrino but with the sign inverted.
+ - Although defaults are given for all options, one must specify at
+ least one argument to actually do a calculation.
 
-The density (in g/cm^3) can be negative in order to use PREM, 0 for
-vacuum or positive for constant density.
-
-The calculation method (see above) can be either "matrix" or "step".
+ - The faster "matrix" method only works on constant matter densities.
+ If a calculation is done with varying densities, an density averaged
+ along the baseline is used.  In the case of PREM, each major section
+ (crust, mantle, core) is separately averaged.
 
