@@ -88,8 +88,8 @@ ComplexMatrix constant_density_evolution_matrix(const OscParam& op,
     ComplexMatrix mm = op.get_matter_matrix();
     T = (A/hbarc) * mm;
 
-    double phi21 = op.get_dms21() / (4.0 * energy * hbarc);
-    double phi31 = op.get_dms31() / (4.0 * energy * hbarc);
+    double phi21 = op.get_dms21() / (2.0 * energy * hbarc);
+    double phi31 = op.get_dms31() / (2.0 * energy * hbarc);
     double phi32 = phi31 - phi21;
 
     T(0,0) += (-phi21 + -phi31) / 3.0;
