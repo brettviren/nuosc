@@ -1,0 +1,23 @@
+
+ libnuosc++ - A library for calculating 3 neutrino oscillation probabilities.
+
+"Step" methods solve the evolution ODE dnu/dx = (-i/(2E)UM^2Udagger +
+V)nu(x) by stepping the neutrino from start to finish using a variety
+of steppers.  The best and default is an adaptive step size
+Runge-Kutta 5th order stepper.  
+
+"Matrix" method (where applicable) solve the ODE directly.  This is
+only possible with oscillations in vacuum and constant matter density.
+
+
+A note on anti-neutrinos: CP symetry is broken in that the matter
+potential and the CP phase changes sign between neutrino and
+anti-neutrino cases.  In the code this is handled inside by the
+OscParam object via OscParam::set_antineutrino().  This unfortunately
+mixes the idea of oscillation parameters (which are fundamental) with
+the particular neutrino which is being evolved.  When asking OscParam
+for a matrix via get_mixing_matrix() or get_matter_matrix() one will
+have this -1 applied if using anti neutrinos.  However, the angle
+returned via get_deltacp() will *NOT*.  When using these two matrices
+for the evolution equation solution, one does not need to worry about
+nu/antinu issues.  This is how nuosc_prob.cc functions behave.

@@ -1,41 +1,72 @@
 #include "nuosc_prob.h"
 #include "options.h"
+#include <string>
+#include <cstring>
 
-typedef struct {
+struct GenProbConfig {
     OscParam op;                // angles, masses, anti?
     ComplexVector nu0;          // normalized initial neutrino
-
+    int nu_num;
+    const char* nu_str;
                                 // Do we iterate on a param?
     bool baseline_iterate, energy_iterate;
                                 // Only use first unless we iterate
     double baseline, blstart, blstop, blstep;
     double energy, estart, estop, estep;
 
-    double density;             // ignored if doing PREM
-    int calculation;            // 1=matrix, 2=step, 3=PREM
+    double density;             // <0 if doing PREM, 0 for vacuum
+    int calculation;            // 1=matrix, 2=step
 
-} GenProbConfig;
+    GenProbConfig() : nu0(3) {
+        nu0 = 0.0;
+        nu0(1) = 1.0;
+        nu_num = 2;
+        nu_str = "nu_mu";
+        baseline_iterate = energy_iterate = false;
+        baseline = 1e5;
+        energy = 1e9;
+        density = 0.0;
+        calculation = 1;
+    }
+};
 GenProbConfig gpc;
 Options* options_ptr = 0;
 
-static void init_gpc()
+static void dump_gpc()
 {
-    gpc.nu0 = ComplexVector(3);
-    gpc.nu0 = 0.0;
-    gpc.nu0(1) = 1.0;
-    gpc.baseline_iterate = gpc.energy_iterate = false;
-    gpc.baseline = 1e5;
-    gpc.energy = 1e9;
-    gpc.density = 0.0;
-    gpc.calculation = 1;
+    cerr << gpc.nu_str << endl
+         << "dms21   = " << gpc.op.get_dms21() << endl
+         << "dms31   = " << gpc.op.get_dms31() << endl
+         << "theta12 = " << gpc.op.get_theta12() << endl
+         << "theta23 = " << gpc.op.get_theta23() << endl
+         << "theta13 = " << gpc.op.get_theta13() << endl
+         << "ss2t12  = " << gpc.op.get_ss2t12() << endl
+         << "ss2t23  = " << gpc.op.get_ss2t23() << endl
+         << "ss2t13  = " << gpc.op.get_ss2t13() << endl
+         << "deltacp = " << gpc.op.get_deltacp() << endl
+         << "calculation = " << gpc.calculation 
+         << (gpc.calculation == 1 ? " (matrix)" : " (step)") << endl;
+    if (gpc.baseline_iterate)
+        cerr << "baseline = " << gpc.blstart << " -> " 
+             << gpc.blstop << " += " << gpc.blstep << endl;
+    else
+        cerr << "baseline = " << gpc.baseline << endl;
+    if (gpc.energy_iterate)
+        cerr << "energy = " << gpc.estart << " -> " 
+             << gpc.estop << " += " << gpc.estep << endl;
+    else
+        cerr << "energy = " << gpc.energy << endl;
+    cerr << "density = " <<  gpc.density << endl;
 }
+
 static void usage(const char* msg)
 {
-    if (!options_ptr) {
-        cerr << msg << endl;
-        return;
+    cerr << msg << endl;
+
+    if (options_ptr) {
+        options_ptr->usage(cerr,"");
     }
-    options_ptr->usage(cerr,msg);
+    exit(1);
 }
 static double d2r(const char* degrees_string)
 {
@@ -63,8 +94,19 @@ static void nunum2nu(const char* nunum_string)
     ComplexVector nu(3);
     nu = 0.;
     nu(abs(nunum)-1) = 1.;
-    if (nunum < 0) gpc.op.set_antineutrino();
+    string nu_str;
+    if (nunum < 0) {
+        gpc.op.set_antineutrino();
+        nu_str = "anti-";
+    }
     gpc.nu0 = nu;
+    switch (abs(nunum)) {
+    case 1: nu_str += "nu_e"; break;
+    case 2: nu_str += "nu_mu"; break;
+    case 3: nu_str += "nu_tau"; break;
+    }
+    gpc.nu_num = nunum;
+    gpc.nu_str = strdup(nu_str.c_str());
 }
 static int parse_calc(const char* calctype)
 {
@@ -79,58 +121,59 @@ void parse_args(int argc, char* argv[])
 {
 
     const char* optv[] = {
-        "e+energy <energy | Estart Estop Estep> [eV] default = 1e9 eV",
-        "b+baseline <baseline | Bstart Bstop Bstep> [cm] default = 1e5 cm",
+        "e:energy <energy> [GeV] default = 1 GeV",
+        "b:baseline <baseline> [km] default = 1 km",
+        "E+energy-range <Estart Estop Estep> [GeV]",
+        "B+baseline-range <Bstart Bstop Bstep> [km]",
         "t+theta <theta_12 theta_23 theta_13> degrees",
         "S+sin  <sin^2(2theta_12) sin^2(2theta_23) sin^2(2theta_13)>",
-        "s|sol <dm2_sol = dm2_21 in eV^2> default = 5.0e-5 eV^2",
-        "a|atm <dm2_atm = dm2_31 in eV^2> default = 2.5e-3 eV^2",
-        "d|delta <CP phase in deg> default = 0",
+        "s:sol <dm2_sol = dm2_21 in eV^2> default = 5.0e-5 eV^2",
+        "a:atm <dm2_atm = dm2_31 in eV^2> default = 2.5e-3 eV^2",
+        "d:delta <CP phase in deg> default = 0",
         "n:neutrino <nu number> nue=1,numu=2,nutau=3, anti *= -1",
         "D:density <constant density in g/cm^3> default = 0. <0 => PREM",
         "c:calculation <calculation type> \"matrix\"(def), \"step\"",
         0
     };
 
-    init_gpc();
-
     Options options(*argv,optv);
     options_ptr = &options;
     OptArgvIter optitr(argc-1,argv+1);
     const char* optarg;
-    vector<const char*> newargv;
-    newargv.push_back(argv[0]);
+
+    if(argc==1) usage("No args supplied");
 
     char optchar;
     while ((optchar = (options)(optitr,optarg))) {
         switch (optchar) {
         case 'e':
             if (!optarg) usage("No energy given with -e");
-            gpc.energy = atof(optarg);
+            gpc.energy = atof(optarg)*1e9;
+            gpc.energy_iterate = false;
+            break;
+        case 'E':
+            gpc.energy_iterate = true;
+            gpc.estart = atof(optarg)*1e9;
             optarg = optitr();
-            if (optarg) {
-                gpc.energy_iterate = true;
-                gpc.estart = gpc.energy;
-                gpc.estop = atof(optarg);
-                optarg = optitr();
-                if (!optarg) gpc.estep = (gpc.estop-gpc.estart)/100.;
-                else gpc.estep = atof(optarg);
-            }
+            gpc.estop = atof(optarg)*1e9;
+            optarg = optitr();
+            if (!optarg) gpc.estep = (gpc.estop-gpc.estart)/100.*1e9;
+            else gpc.estep = atof(optarg)*1e9;
             break;
         case 'b':
             if (!optarg) usage("No baseline given with -b");
-            gpc.baseline = atof(optarg);
-            optarg = optitr();
-            if (optarg) {
-                gpc.baseline_iterate = true;
-                gpc.blstart = gpc.baseline;
-                gpc.blstop = atof(optarg);
-                optarg = optitr();
-                if (!optarg) gpc.blstep = (gpc.blstop-gpc.blstart)/100.;
-                else gpc.blstep = atof(optarg);
-            }
+            gpc.baseline = atof(optarg)*1e5;
+            gpc.baseline_iterate = false;
             break;
-
+        case 'B':
+            gpc.baseline_iterate = true;
+            gpc.blstart = atof(optarg)*1e5;
+            optarg = optitr();
+            gpc.blstop = atof(optarg)*1e5;
+            optarg = optitr();
+            if (!optarg) gpc.blstep = (gpc.blstop-gpc.blstart)/100.*1e5;
+            else gpc.blstep = atof(optarg)*1e5;
+            break;
         case 't':
             gpc.op.set_theta12(d2r(optarg));
             optarg = optitr();
@@ -172,6 +215,17 @@ void parse_args(int argc, char* argv[])
             usage("");
         }
     }
+
+    dump_gpc();
+}
+
+static void output(double energy, double baseline, const ComplexVector& nu)
+{
+    vector<double> p = nuosc_amplitude_to_prob(nu);
+    cout << energy/1e9 << " " << baseline/1e5 << " " 
+         << p[0] << " "
+         << p[1] << " "
+         << p[2] << endl;
 }
 
 // Uniform interface to all calculations
@@ -194,34 +248,49 @@ do_prob_f do_prob;
 // iterate over both energy and baseline
 void do_energy_baseline(void)
 {
+    for (double baseline = gpc.blstart; baseline <= gpc.blstop; baseline += gpc.blstep) {
+        for (double energy = gpc.estart; energy <= gpc.estop; energy += gpc.estep) {
+            ComplexVector nu = do_prob(energy,baseline);
+            output(energy,baseline,nu);
+        }
+    }
 }
-
 // iterate over just energy
 void do_energy(void)
 {
+    for (double energy = gpc.estart; energy <= gpc.estop; energy += gpc.estep) {
+        ComplexVector nu = do_prob(energy,gpc.baseline);
+        output(energy,gpc.baseline,nu);
+    }
 }
 
 // iterate over just baseline
 void do_baseline(void)
 {
+    for (double baseline = gpc.blstart; baseline <= gpc.blstop; baseline += gpc.blstep) {
+        ComplexVector nu = do_prob(gpc.energy,baseline);
+        output(gpc.energy,baseline,nu);
+    }
 }
 
 // no iteration, just one shot
 void do_single()
 {
+    ComplexVector nu = do_prob(gpc.energy,gpc.baseline);
+    output(gpc.energy,gpc.baseline,nu);
 }
 
 int main (int argc, char *argv[])
 {
     parse_args(argc,argv);
 
-    if (gpc.density < 0) {
+    if (gpc.density < -0.0001) {
         if (gpc.calculation == 1)
             do_prob = do_prem_matrix;
         else
             do_prob = do_prem_step;
     }
-    else if (gpc.density > 0) {
+    else if (gpc.density > 0.0001) {
         if (gpc.calculation == 1)
             do_prob = do_matter_matrix;
         else 
@@ -236,12 +305,11 @@ int main (int argc, char *argv[])
 
     if (gpc.baseline_iterate && gpc.energy_iterate) 
         do_energy_baseline();
-    if (gpc.baseline_iterate)
+    else if (gpc.baseline_iterate)
         do_baseline();
-    if (gpc.energy_iterate)
+    else if (gpc.energy_iterate)
         do_energy();
-
-    do_single();
+    else do_single();
 
     return 0;
 } // end of main()

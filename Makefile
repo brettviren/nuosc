@@ -1,6 +1,5 @@
 CXX = g++ # -pg  -fprofile-arcs 
-CXXFLAGS =  -Wall -g  -Wno-unused  # -O2
-#CXXFLAGS = -Wall -O2 
+CXXFLAGS =  -Wall -g  -Wno-unused -O2
 BLITZLIB = -lblitz
 LIBS = $(BLITZLIB)
 
@@ -19,7 +18,7 @@ mains:
 	make -C main
 
 clean:
-	rm -f *~ $(OBJS) $(LIB) $(LIBA)
+	rm -f *~ $(OBJS) $(LIB) $(LIBA) *.d *.da
 
 
 $(LIB): $(OBJS)
