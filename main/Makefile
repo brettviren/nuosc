@@ -1,15 +1,18 @@
 include ../config.mk
 
 
-LIBS = -L.. -lnuosc++ $(BLITZLIB) -lm 
+LIBS = -L. -L.. -lnuosc++ $(BLITZLIB) -lm 
 CXXFLAGS = -I.. -g  -Wall -Wno-unused $(BLITZINC) # -O2 
 
-OBJS = options.o
-MAINS = genprob
+OBJS = options.o util.o Config.o ProbCalc.o
+MAINS = nuosc # genprob 
 
 default: $(MAINS)
 
 genprob: genprob.o $(OBJS) 
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+nuosc: nuosc.o $(OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 %.o: %.cc
