@@ -130,6 +130,7 @@ double earth_average_region_density(double x0, double xf, double D)
     double i = b*(xf-x0) + m*(0.25*( (2*xf-D)*rf - (2*x0-D)*r0 )
                               + ((4*Rearth*Rearth-D*D)/8.
                                  * log( (2*xf-D+2*rf)/(2*x0-D+2*r0) )));
+#if 0
     cerr << "x0=" << x0
          << " xf=" << xf
          << " rho0=" << rho0
@@ -138,6 +139,7 @@ double earth_average_region_density(double x0, double xf, double D)
          << " b=" << b
          << " i=" << i
          << endl;
+#endif
 
     return i/(xf-x0);
 }

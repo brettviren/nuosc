@@ -1,6 +1,6 @@
-CXX = g++
-LIBS =  -lblitz -lm
-CXXFLAGS = -I.. -g  -Wall -Wno-unused
+CXX = g++ -pg  -fprofile-arcs 
+LIBS =  -lblitz -lm 
+CXXFLAGS = -I.. -O2 -g  -Wall -Wno-unused
 
 GENTEST = prem-test
 
@@ -16,6 +16,9 @@ default: $(TESTEXECS)
 
 %-test.o: %-test.cc ../nuosc_prob.h
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+%-static-test: %-test.o 
+	$(CXX) $(LDFLAGS) -o $@ $^ ../*.o $(LIBS)
 
 TESTFILES=$(addsuffix .vec, $(TESTEXECS))
 

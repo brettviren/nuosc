@@ -1,5 +1,5 @@
-CXX = g++
-CXXFLAGS = -Wall -g  -Wno-unused
+CXX = g++ -pg  -fprofile-arcs 
+CXXFLAGS = -pg -O2 -Wall -g  -Wno-unused
 #CXXFLAGS = -Wall -O2 
 BLITZLIB = -lblitz
 LIBS = $(BLITZLIB)
@@ -7,6 +7,7 @@ LIBS = $(BLITZLIB)
 SRCS = $(wildcard *.cc)
 OBJS = $(addsuffix .o, $(basename $(SRCS)))
 LIB = libnuosc++.so
+LIBA = libnuosc++.a
 LIBSRC = $(SRCS)
 
 default: $(LIB) tests
@@ -16,11 +17,14 @@ tests:
 
 
 clean:
-	rm -f *~ $(OBJS)
+	rm -f *~ $(OBJS) $(LIB) $(LIBA)
 
 
 $(LIB): $(OBJS)
 	$(CXX) -shared -o $@ $^
+
+$(LIBA): $(OBJS)
+	$(AR) rv $@ $^
 
 %.o: %.cc
 	$(CXX) $(CXXFLAGS) -o $@ -c $<

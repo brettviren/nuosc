@@ -68,7 +68,7 @@ ComplexVector nuosc_prob_vacuum_step(ComplexVector initial_neutrino,
 
     double length = oscilation_length < baseline ? oscilation_length : baseline;
 
-    cerr << oscilation_length << "cm,  prec = " << prec << endl;
+//    cerr << oscilation_length << "cm,  prec = " << prec << endl;
     NuEvolverVacuum nev(op,energy,baseline);
     nev.SetPrecision(prec);
     return nev.Solve(0,baseline,1e-7*length,initial_neutrino);
@@ -222,7 +222,7 @@ ComplexVector nuosc_prob_matter_constant_step(ComplexVector initial_neutrino,
 
     double length = oscilation_length < baseline ? oscilation_length : baseline;
 
-    cerr << oscilation_length << "cm,  prec = " << prec << endl;
+//    cerr << oscilation_length << "cm,  prec = " << prec << endl;
     NuEvolverConstant nev(op,energy,baseline,density);
     assert (fabs(nev.get_density()-density) < 1e15);
     nev.SetPrecision(prec);
@@ -244,11 +244,11 @@ ComplexVector nuosc_prob_matter_earth_matrix_piecewise(ComplexVector initial_neu
     vec = initial_neutrino;
     for (int i=0; i < n; ++i) {
         double density = earth_average_region_density(x0[i],xf[i],baseline);
-        cerr << "density = " << density << endl;
+//        cerr << "density = " << density << endl;
 
         vec = nuosc_prob_matter_constant_matrix(vec,op,energy,xf[i]-x0[i],density);
     }
-    cerr << "nu=" << vec << endl;
+//    cerr << "nu=" << vec << endl;
     return vec;
 }
 
@@ -261,7 +261,7 @@ ComplexVector nuosc_prob_matter_earth_step(ComplexVector initial_neutrino,
     double prec = 1.0e-13*baseline/oscilation_length;
     double length = oscilation_length < baseline ? oscilation_length : baseline;
 
-    cerr << oscilation_length << "cm,  prec = " << prec << endl;
+//    cerr << oscilation_length << "cm,  prec = " << prec << endl;
     NuEvolverPrem nev(op,energy,baseline);
     nev.SetPrecision(prec);
     return nev.Solve(0,baseline,1e-7*length,initial_neutrino);
