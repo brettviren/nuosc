@@ -1,6 +1,6 @@
 /**
  *
- * $Id: NuEvolverVacuum.h,v 1.2 2002-11-23 22:23:06 bviren Exp $
+ * $Id: NuEvolverVacuum.h,v 1.3 2002-11-26 22:09:26 bviren Exp $
  *
  * \class NuEvolverVacuum
  *
@@ -35,7 +35,7 @@ public:
     virtual void set_energy(double energy);
 
     /// What we are here for
-    virtual ComplexVector operator()(const ComplexVector& nu, double x) const;
+    virtual ComplexVector operator()(ComplexVector nu, double x) const;
 
 
 protected: 

@@ -1,6 +1,6 @@
 /**
  *
- * $Id: NuEvolver.h,v 1.2 2002-11-23 22:23:06 bviren Exp $
+ * $Id: NuEvolver.h,v 1.3 2002-11-26 22:09:26 bviren Exp $
  *
  * \class NuEvolver
  *
@@ -24,8 +24,9 @@
 #define NUEVOLVER_H
 
 #include "OscParam.h"
+#include "OdeFunc.h"
 
-class NuEvolver
+class NuEvolver : public OdeFunc
 {
 
 public:
@@ -34,8 +35,8 @@ public:
     NuEvolver(OscParam op, double energy=1.0e9, double baseline=1.0e5);
     virtual ~NuEvolver();
 
-    /// Return the d(nu(x))/dx at the given x.
-    virtual ComplexVector operator() (const ComplexVector& nu, double x) const = 0;
+    /// Subclasses should return the d(nu(x))/dx at the given x in:
+    // ComplexVector operator() (const ComplexVector& nu, double x);
 
     /// Access the oscillation and other parameters.
     const OscParam& get_oscparams() const;

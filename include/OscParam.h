@@ -1,6 +1,6 @@
 /**
  *
- * $Id: OscParam.h,v 1.5 2002-11-25 20:00:26 bviren Exp $
+ * $Id: OscParam.h,v 1.6 2002-11-26 22:09:26 bviren Exp $
  *
  * \class OscParam
  *
@@ -88,10 +88,7 @@ private:
     double m_dm2_21, m_dm2_31;
     double m_theta_12, m_theta_23, m_theta_13;
     double m_delta_cp;
-    
-    mutable bool m_dirty_mixing;
-    mutable ComplexMatrix m_mixing_matrix;
-    
+        
 };                              // end of class OscParam
 
 

@@ -1,6 +1,6 @@
 /**
  *
- * $Id: NuEvolverConstant.h,v 1.1 2002-11-21 22:40:58 bviren Exp $
+ * $Id: NuEvolverConstant.h,v 1.2 2002-11-26 22:09:26 bviren Exp $
  *
  * \class NuEvolverConstant
  *
@@ -37,6 +37,10 @@ public:
     // This could be sussed from the neutrino passed into operator()()
     // but that would add to the calculation.  Just set it by hand!
     void assume_anti_neutrino(bool tf = false);
+
+    // Rely on base class for:
+    // virtual ComplexVector operator()(ComplexVector nu, double x) const;
+
 
 protected:
     // override vacuum calc to add our chunk.

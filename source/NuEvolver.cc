@@ -7,7 +7,7 @@ NuEvolver::NuEvolver()
     , m_baseline(1.0e5)
 {
 }
-NuEvolver::NuEvolver(OscParam op, double energy=1.0e9, double baseline=1.0e5)
+NuEvolver::NuEvolver(OscParam op, double energy, double baseline)
     : m_oscparam(op)
     , m_energy(energy)
     , m_baseline(baseline)

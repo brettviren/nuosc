@@ -28,8 +28,9 @@ void NuEvolverVacuum::set_energy(double energy)
 }
 
 ComplexVector
-NuEvolverVacuum::operator()(const ComplexVector& nu, double x) const 
+NuEvolverVacuum::operator()(ComplexVector nu, double x) const 
 {
+//    cerr << x << endl;
     using namespace blitz::tensor; // for i,j
     ComplexVector ret(3);
     ret = sum(m_transform(i,j)*nu(j),j);

@@ -9,7 +9,10 @@ OBJS = $(addsuffix .o, $(basename $(SRCS)))
 LIB = libnuosc++.so
 LIBSRC = $(SRCS)
 
-default: $(LIB)
+default: $(LIB) tests
+
+tests:
+	make -C test
 
 
 clean:
