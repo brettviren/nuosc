@@ -2,31 +2,6 @@
 
 using namespace blitz;
 
-// The different method steppers.
-
-// Simple Euler method (the default) as seen in Computational Physics,
-// Koonin & Meredith.  Need high precision.  This evaluates ode_func 1
-// time per step.
-ComplexVector euler_stepper(OdeFunc& ode_func,
-                            double x, double& step_size,
-                            ComplexVector y, double unused);
-
-// 4th order Runge-Kutta method as seen in Computational Physics,
-// Koonin & Meredith.  Can do better with lower precision, but can
-// blow up or take forever if necessary step size changes.  This
-// evaluates ode_func 4 times per step.
-ComplexVector runge_kutta_4th_stepper(OdeFunc& ode_func,
-                                      double x, double& step_size, 
-                                      ComplexVector y, double unused);
-
-// 5th order Runge-Kutta with adaptive step sizing by comparing each
-// step to that found with (an embedded) 4th order R-K.  As seen in
-// Num Rec.  This evaluates the ode_func 6 times per successful step.
-// In the case of a too big step, a second step with smaller step size
-// is done.
-ComplexVector runge_kutta_adaptive_stepper(OdeFunc& ode_func,
-                                           double x, double& step_size,
-                                           ComplexVector y, double prec);
 
 
 
@@ -38,13 +13,13 @@ void OdeFunc::SetStepper(OdeFunc::StepperType st)
     m_prec = 0;
     switch (st) {
     case euler:
-        m_stepper = euler_stepper;
+        m_stepper = &OdeFunc::euler_stepper;
         break;
     case runge_kutta: 
-        m_stepper = runge_kutta_4th_stepper;
+        m_stepper = &OdeFunc::runge_kutta_4th_stepper;
         break;
     case runge_kutta_adaptive: default:
-        m_stepper = runge_kutta_adaptive_stepper;
+        m_stepper = &OdeFunc::runge_kutta_adaptive_stepper;
         m_prec = 1.0e-15;
         break;
     }
@@ -54,15 +29,24 @@ ComplexVector OdeFunc::Step(double x, double& step_size,
                             ComplexVector y)
 {
     assert (m_stepper);
-    return m_stepper(*this,x,step_size,y,m_prec);
+    return (this->*m_stepper)(x,step_size,y,m_prec);
 }
 
 
-// Integrate in one shot.
+void OdeFunc::SaveStep(ComplexVector y, double x)
+{
+    m_steps.push_back(x);
+    ComplexVector save(3);
+    save = y;           // make sure we copy.  CV v1 = v2 is a ref
+    m_values.push_back(save);
+}
+
+// Integrate over one region.
 ComplexVector OdeFunc::Solve(double x0, double xf, double step_size,
                              ComplexVector y0)
 {
     assert(m_stepper);
+
     ComplexVector y(3);
     y = y0;
     double x;
@@ -72,73 +56,90 @@ ComplexVector OdeFunc::Solve(double x0, double xf, double step_size,
         y = this->Step(x,step_size, y);
 //        cerr  << "(" << step_size << ")"
 //              << "x=" << x << ", y= " << y << endl;
-        double mag =  vector_magnitude(y);
-        if (fabs(1-mag) > 0.001)
-            cerr << "|y|=" << mag << endl;
+//        double mag =  vector_magnitude(y);
+//        if (fabs(1-mag) > 0.001)
+//            cerr << "|y|=" << mag << endl;
 //        y /= mag;
     }
+#if 1
     cerr << "\nxf - x = " << xf - x
          << " requested_step = " << requested_step_size
          << " step = " << step_size
          << endl;
+#endif
+    // The actual location of the last evaluation for Y.  Assumes that
+    // the step wasn't recursive!.
+    double last_x = x - step_size + requested_step_size;
 
     // Already over stepped, just live with it
-    if (x>xf) return y;
+    if (last_x>xf) {
+        m_steps.push_back(last_x);
+        ComplexVector save(3);
+        save = y;
+        m_values.push_back(save);
+        return y;
+    }
 
     // Next step will over step, so just end things with an explicit
-    // last step.
+    // last step.  Use RK 4th for a that extra bit of accuracy.
 
-    double last_x = x - step_size + requested_step_size;
-    return y+(xf-last_x)*(*this)(y,last_x);
+    m_steps.push_back(last_x);
+    ComplexVector save(3);
+    double dx = xf-last_x;
+    save = this->runge_kutta_4th_stepper(last_x,dx,y);
+    m_values.push_back(save);
+    return save;
 }
 
 // Integrate over discrete regions.  This will integrate from x0[0] to
-// xf[0] with step_size[0], then restart at x0[1], etc.  This can be
-// used to give more steps to certain regions, or to break the
-// integration at a discontinuity.
-ComplexVector OdeFunc::Solve(double x0[], double xf[], double step_size[],
+// xf[0] with step_size[0], then jump to x0[1], etc.  This can be used
+// to give more steps to certain regions, or to break the integration
+// at discontinuities.  
+ComplexVector OdeFunc::Solve(const double x0[], const double xf[], 
+                             const double step_size[],
                              int nregions, ComplexVector y0)
 {
-    assert(m_stepper);
     ComplexVector y(3);
     y = y0;
     for (int region = 0; region < nregions; ++region) {
-        int steps=0;
-        for (double x = x0[region]; x <= xf[region]; x += step_size[region]) {
-            y = this->Step(x,step_size[region], y);
-            ++steps;
-        }
-        cerr << "Region " << region << ": " << steps << " steps\n";
+        double ss = step_size[region];
+        y = this->Solve(x0[region],xf[region],ss,y);
     }
     return y;
 }
 
 
 // Euler method, error = order(step_size^2)
-ComplexVector euler_stepper(OdeFunc& ode_func,
-                            double x, double& step_size, 
-                            ComplexVector y, double)
+ComplexVector OdeFunc::euler_stepper(double x, double& step_size, 
+                                     ComplexVector y, double)
 {
-    return y + step_size*ode_func(y,x);
+    OdeFunc& ode_func = (*this);
+    ComplexVector ret(3);
+    ret = y + step_size*ode_func(y,x);
+    this->SaveStep(y,x+step_size);
+    return ret;
 }
 
 
 // 4th order Runge-Kutta, error = order(step_size^5)
-ComplexVector runge_kutta_4th_stepper(OdeFunc& ode_func,
-                                      double x, double& step_size, 
-                                      ComplexVector y, double)
+ComplexVector OdeFunc::runge_kutta_4th_stepper(double x, double& step_size, 
+                                               ComplexVector y, double)
 {
+    OdeFunc& ode_func = (*this);
+
     ComplexVector k1(3), k2(3), k3(3), k4(3);
     k1 = step_size*ode_func(y,               x);
     k2 = step_size*ode_func(y+0.5*k1, x+0.5*step_size);
     k3 = step_size*ode_func(y+0.5*k2, x+0.5*step_size);
     k4 = step_size*ode_func(y+    k3, x+    step_size);
-    return y + (1.0/6.0) * (k1 + 2.0*k2 + 2.0*k3 + k4);
+    ComplexVector ret(3);
+    ret = y + (1.0/6.0) * (k1 + 2.0*k2 + 2.0*k3 + k4);
+    this->SaveStep(y,x+step_size);
+    return ret;
 }
 
-ComplexVector runge_kutta_adaptive_stepper(OdeFunc& ode_func,
-                                           double x, double& h,
-                                           ComplexVector y, double prec)
+ComplexVector OdeFunc::runge_kutta_adaptive_stepper(double x, double& h,
+                                                    ComplexVector y, double prec)
 {
     ComplexVector k1(3), k2(3), k3(3), k4(3), k5(3), k6(3);
     ComplexVector y5(3), dy(3);
@@ -152,6 +153,8 @@ ComplexVector runge_kutta_adaptive_stepper(OdeFunc& ode_func,
     const double b4[4] = {0, 0.3, -0.9, 1.2};
     const double b5[5] = {0, -11.0/54.0, 2.5, -70.0/27.0, 35.0/27.0};
     const double b6[6] = {0, 1631.0/55296.0, 175.0/512.0, 575.0/13824.0, 44275.0/110592.0, 253.0/4096.0};
+
+    OdeFunc& ode_func = (*this);
 
     k1 = h*ode_func(y,       x);
     k2 = h*ode_func(y+b2[1]*k1,x+a[2]*h);
@@ -194,6 +197,14 @@ ComplexVector runge_kutta_adaptive_stepper(OdeFunc& ode_func,
 //        cerr << "+ " << h;
 //        double mult = S*pow(ratio,0.01);
         double mult = S*pow(ratio,0.10);
+
+        if (mult > 1.00001)  {
+//            cerr << "Conditioning: h=" << h << " mult=" << mult << endl;
+            cerr << ".";
+            h *= mult;
+            return this->runge_kutta_adaptive_stepper(x, h, y, prec);
+        }
+
 //        double mult = S*pow(ratio,0.20);
         cerr << "+";
 #if 0
@@ -204,6 +215,8 @@ ComplexVector runge_kutta_adaptive_stepper(OdeFunc& ode_func,
              << " at " << x
              << endl;
 #endif
+
+        this->SaveStep(y5,x+h);
         h *= mult;
         return y5;
     }
@@ -219,5 +232,5 @@ ComplexVector runge_kutta_adaptive_stepper(OdeFunc& ode_func,
 //         << " at " << x 
 //         << endl;
     cerr << "\n-\a\n";
-    return runge_kutta_adaptive_stepper(ode_func, x, h, y, prec);
+    return this->runge_kutta_adaptive_stepper(x, h, y, prec);
 }

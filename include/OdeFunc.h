@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////
 //
-// $Id: OdeFunc.h,v 1.1 2002-11-26 22:09:26 bviren Exp $
+// $Id: OdeFunc.h,v 1.2 2002-12-02 16:14:18 bviren Exp $
 //
 // OdeFunc
 //
@@ -63,18 +63,54 @@ public:
     // integrate from x0[0] to xf[0] with step_size[0], then restart
     // at x0[1], etc.  This can be used to give more steps to certain
     // regions, or to break the integration at a discontinuity.  
-    ComplexVector Solve(double x0[], double xf[], double step_size[],
+    ComplexVector Solve(const double x0[], const double xf[], 
+                        const double step_size[],
                         int nregions, ComplexVector y0);
 
+    // Call before a Solve()
+    void ClearSteps() { m_steps.clear(); m_values.clear(); }
+    vector<double> GetSteps(void) { return m_steps; }
+    vector<ComplexVector> GetStepValues(void) { return m_values; }
+
+    // Mostly internal.  Do a step with the current stepper.
     ComplexVector Step(double x, double& step_size, ComplexVector y);
+    void SaveStep(ComplexVector y, double x);
 
 private:
-    typedef ComplexVector (*OdeStepper)(OdeFunc& ode_func,
-                                        double x, double& step_size, 
-                                        ComplexVector y, double prec);
 
+    // The different method steppers.  Besides doing the step, each
+    // will save the result in the Steps and Values vectors.
+
+    // Simple Euler method (the default) as seen in Computational
+    // Physics, Koonin & Meredith.  Need high precision.  This
+    // evaluates ode_func 1 time per step.
+    ComplexVector euler_stepper(double x, double& step_size, 
+                                ComplexVector y, double prec=0);
+    
+    // 4th order Runge-Kutta method as seen in Computational Physics,
+    // Koonin & Meredith.  Can do better with lower precision, but can
+    // blow up or take forever if necessary step size changes.  This
+    // evaluates ode_func 4 times per step.
+    ComplexVector runge_kutta_4th_stepper(double x, double& step_size, 
+                                          ComplexVector y, double prec=0);
+
+    // 5th order Runge-Kutta with adaptive step sizing by comparing
+    // each step to that found with (an embedded) 4th order R-K.  As
+    // seen in Num Rec.  This evaluates the ode_func 6 times per
+    // successful step.  In the case of a too big step, a second step
+    // with smaller step size is done.
+    ComplexVector runge_kutta_adaptive_stepper(double x, double& step_size, 
+                                               ComplexVector y, double prec=0);
+
+    typedef ComplexVector (OdeFunc::* OdeStepper)(double x, double& step_size, 
+                                                  ComplexVector y, double prec=0);
+
+    // The one we use
     OdeStepper m_stepper;
     double m_prec;
+
+    vector<double> m_steps;
+    vector<ComplexVector> m_values;
 };
 
 #endif  // ODE_H
