@@ -26,9 +26,12 @@ double vector_magnitude(ComplexVector v);
 
 ComplexVector complex_conjugate(ComplexVector v);
 
-// Complex Matrices
+/// Complex Matrices
+/// M*
 ComplexMatrix complex_conjugate(ComplexMatrix m);
+/// M1.M2
 ComplexMatrix matrix_product(ComplexMatrix m1, ComplexMatrix m2);
+/// M*t
 ComplexMatrix hermitian_conjugate(ComplexMatrix m); // dagger
 
 #endif  // MATRIX_H

@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -g -Wno-unused
+CXXFLAGS = -Wall -g  -Wno-unused
 #CXXFLAGS = -Wall -O2 
 BLITZLIB = -lblitz
 LIBS = $(BLITZLIB)

@@ -1,6 +1,6 @@
 /**
  *
- * $Id: OscParam.h,v 1.4 2002-11-23 22:23:06 bviren Exp $
+ * $Id: OscParam.h,v 1.5 2002-11-25 20:00:26 bviren Exp $
  *
  * \class OscParam
  *
@@ -58,12 +58,9 @@ public:
 
     OscParam(double dm2_21=5.0e-5, /*ev^2*/
              double dm2_31=2.5e-3, /*ev^2*/
-             double theta_12=0.553574358897045, /*31.7 deg => sin22t12 = 0.8*/
-             double theta_23=0.785398163397448, /*45.0 deg => sin22t23 = 1.0*/
-             double theta_13=0.219074515292085, /*12.5 deg => sin22t13
-                                                 * = 0.18 (CHOOZ at SK
-                                                 * best dm2_23 fit
-                                                 * point */
+             double theta_12=0.553574358897045, //31.7 deg => sin22t12 = 0.8
+             double theta_23=0.785398163397448, //45.0 deg => sin22t23 = 1.0
+             double theta_13=0.160875277198,    // 8.9 deg => sin22t13 = 0.1
              double delta_cp = 0.0); 
     ~OscParam();
 
