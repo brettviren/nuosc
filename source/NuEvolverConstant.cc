@@ -3,27 +3,18 @@
 #include "nuosc_earth.h"
 #include "constants.h"
 
-NuEvolverConstant::NuEvolverConstant(double density, bool anti_neutrino)
+NuEvolverConstant::NuEvolverConstant(double density)
     : NuEvolverVacuum()
-    , m_antineutrino(anti_neutrino)
     , m_density(density)
 {
     this->real_calculate();
 }
 NuEvolverConstant::NuEvolverConstant(OscParam op, double energy, double baseline,
-                                     double density, bool anti_neutrino)
+                                     double density)
     : NuEvolverVacuum(op,energy,baseline)
-    , m_antineutrino(anti_neutrino)
     , m_density(density)
 {
     this->real_calculate();
-}
-
-void NuEvolverConstant::assume_anti_neutrino(bool tf)
-{
-    if (m_antineutrino == tf) return;
-    m_antineutrino = tf;
-    this->calculate();
 }
 
 double NuEvolverConstant::get_density(void) const 
@@ -52,7 +43,7 @@ void NuEvolverConstant::real_calculate()
     double A = 7.6e-14*m_density*earth_electron_fraction_by_density(m_density);
     // Convert from eV to 1/cm
     A /= hbarc;
-    if (m_antineutrino) A *= -1.0;
+    if (this->get_oscparams().is_antineutrino()) A *= -1.0;
 
     // Get reference to transform matrix.
     ComplexMatrix m = this->NuEvolverVacuum::get_transform();

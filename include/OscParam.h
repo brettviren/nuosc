@@ -1,6 +1,6 @@
 /**
  *
- * $Id: OscParam.h,v 1.7 2002-12-02 22:53:01 bviren Exp $
+ * $Id: OscParam.h,v 1.8 2002-12-05 18:55:17 bviren Exp $
  *
  * \class OscParam
  *
@@ -74,6 +74,14 @@ public:
     double get_ss2t23() const;        // as sin^2(2theta)
     double get_ss2t13() const;        // as sin^2(2theta)
 
+    /// Set the antineutrino related -1.  This *only* effects the
+    /// the mixing_matrix (deltacp -> -deltacp) and the matter_matrix
+    /// (matter_matrix -> -matter_matrix).  The fundamental
+    /// parameters, in particular that returned by get_deltatcp() are
+    /// *NOT* modified.
+    void set_antineutrino();
+    bool is_antineutrino() const;
+
     /// Returns "U" the vacuum mixing matrix for the given parameters
     ComplexMatrix get_mixing_matrix() const;
 
@@ -98,6 +106,7 @@ private:
     mutable ComplexMatrix m_mixing_matrix, m_matter_matrix;
     mutable bool m_dirty;
 
+    double m_anti_multiplier;
 };                              // end of class OscParam
 
 

@@ -75,28 +75,6 @@ ComplexVector nuosc_prob_vacuum_step(ComplexVector initial_neutrino,
 }
 
 
-ComplexMatrix make_T(double A,
-                     complex<double> Ue1,
-                     complex<double> Ue2,
-                     complex<double> Ue3,
-                     double E21,double E31,double E32)
-{
-    complex<double> Ue1s = complex_conjugate(Ue1);
-    complex<double> Ue2s = complex_conjugate(Ue2);
-    complex<double> Ue3s = complex_conjugate(Ue3);
-    ComplexMatrix T(3,3);
-    T(0,0) = A*Ue1s*Ue1 - A/3.0 +(-E21-E31)/3.0;
-    T(0,1) = A*Ue1s*Ue2;
-    T(0,2) = A*Ue1s*Ue3;
-    T(1,0) = A*Ue2s*Ue1;
-    T(1,1) = A*Ue2s*Ue2 - A/3.0 +(+E21-E32)/3.0;
-    T(1,2) = A*Ue2s*Ue3;
-    T(2,0) = A*Ue3s*Ue1;
-    T(2,1) = A*Ue3s*Ue2;
-    T(2,2) = A*Ue3s*Ue3 - A/3.0 +(+E31+E32)/3.0;
-    return T;
-}
-
 // This is taken from 
 // Ohlsson & Snellman J. Math. Phys. 41, No 5 May 2000
 // hep-ph/9910564
@@ -188,8 +166,8 @@ ComplexVector nuosc_prob_matter_constant_matrix(ComplexVector initial_neutrino,
                                                 double energy, double baseline,
                                                 double density)
 {
-    ComplexMatrix Uf = constant_density_evolution_matrix(op,energy,
-                                                         baseline,density);
+    ComplexMatrix Uf = 
+        constant_density_evolution_matrix(op,energy,baseline,density);
     ComplexVector vec(3);
 
     // (Uf)(nu0)

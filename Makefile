@@ -1,5 +1,5 @@
 CXX = g++ # -pg  -fprofile-arcs 
-CXXFLAGS =  -Wall -g  -Wno-unused  -O2
+CXXFLAGS =  -Wall -g  -Wno-unused  # -O2
 #CXXFLAGS = -Wall -O2 
 BLITZLIB = -lblitz
 LIBS = $(BLITZLIB)
@@ -10,11 +10,13 @@ LIB = libnuosc++.so
 LIBA = libnuosc++.a
 LIBSRC = $(SRCS)
 
-default: $(LIB) tests
+default: $(LIB)  mains # tests
 
 tests:
 	make -C test
 
+mains:
+	make -C main
 
 clean:
 	rm -f *~ $(OBJS) $(LIB) $(LIBA)

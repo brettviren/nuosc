@@ -3,21 +3,13 @@
 #include "nuosc_earth.h"
 #include "constants.h"
 
-NuEvolverPrem::NuEvolverPrem(bool anti_neutrino)
+NuEvolverPrem::NuEvolverPrem()
     : NuEvolverVacuum()
-    , m_antineutrino(anti_neutrino)
 {
 }
-NuEvolverPrem::NuEvolverPrem(OscParam op, double energy, double baseline,
-                             bool anti_neutrino)
+NuEvolverPrem::NuEvolverPrem(OscParam op, double energy, double baseline)
     : NuEvolverVacuum(op,energy,baseline)
-    , m_antineutrino(anti_neutrino)
 {
-}
-
-void NuEvolverPrem::assume_anti_neutrino(bool tf)
-{
-    m_antineutrino = tf;
 }
 
 ComplexVector NuEvolverPrem::operator()(ComplexVector nu, double x) const
@@ -28,7 +20,7 @@ ComplexVector NuEvolverPrem::operator()(ComplexVector nu, double x) const
     double A = 7.6e-14*density*earth_electron_fraction_by_density(density);
     // Convert from eV to 1/cm
     A /= hbarc;
-    if (m_antineutrino) A *= -1.0;
+    if (this->get_oscparams().is_antineutrino()) A *= -1.0;
 
     // Get COPY of the vacuum term and add the matter term
     ComplexMatrix m(3,3);

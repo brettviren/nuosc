@@ -1,6 +1,6 @@
 /**
  *
- * $Id: nuosc_prob.h,v 1.4 2002-12-04 22:00:44 bviren Exp $
+ * $Id: nuosc_prob.h,v 1.5 2002-12-05 18:55:17 bviren Exp $
  *
  * \class nuosc_prob
  *
@@ -51,10 +51,10 @@ ComplexVector nuosc_prob_matter_constant_step(ComplexVector initial_neutrino,
 /// MASS eigenstate of given energy over given distance through matter
 /// of given density and with corresponding vacuum oscillation
 /// parameters.
-ComplexMatrix constant_density_mass_evolution_matrix(const OscParam& op,
-                                                     double energy,
-                                                     double distance,
-                                                     double density);
+ComplexMatrix constant_density_evolution_matrix(const OscParam& op,
+                                                double energy,
+                                                double distance,
+                                                double density);
 
 // Jump the neutrino state through the earth in pieces assuming
 // average density across jumps.  Each jump takes the neutrino across

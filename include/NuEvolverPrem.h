@@ -1,6 +1,6 @@
 /**
  *
- * $Id: NuEvolverPrem.h,v 1.1 2002-12-04 22:00:44 bviren Exp $
+ * $Id: NuEvolverPrem.h,v 1.2 2002-12-05 18:55:17 bviren Exp $
  *
  * \class NuEvolverPrem
  *
@@ -29,18 +29,11 @@ class NuEvolverPrem : public NuEvolverVacuum
 
 public:
 
-    NuEvolverPrem(bool anti_neutrino = false);
-    NuEvolverPrem(OscParam op, double energy=1.0e9, double baseline=1.0e5,
-                  bool anti_neutrino = false);
-
-    // This could be sussed from the neutrino passed into operator()()
-    // but that would add to the calculation.  Just set it by hand!
-    void assume_anti_neutrino(bool tf = false);
+    NuEvolverPrem();
+    NuEvolverPrem(OscParam op, double energy=1.0e9, double baseline=1.0e5);
 
     virtual ComplexVector operator()(ComplexVector nu, double x) const;
 
-private:
-    bool m_antineutrino;
 };                              // end of class NuEvolverPrem
 
 #endif  // NUEVOLVERPREM_H

@@ -16,10 +16,20 @@ OscParam::OscParam(double dm2_21, double dm2_31,
     , m_mixing_matrix(3,3)
     , m_matter_matrix(3,3)
     , m_dirty(true)
+    , m_anti_multiplier(1.0)
 {
 }
 OscParam::~OscParam()
 {
+}
+
+void OscParam::set_antineutrino()
+{
+    m_anti_multiplier = -1.0;
+}
+bool OscParam::is_antineutrino() const
+{
+    return m_anti_multiplier < 0;
 }
 
 double OscParam::get_dms21() const
@@ -67,7 +77,7 @@ void OscParam::calculate() const
     if (! m_dirty) return;
 
     m_mixing_matrix = mixing_matrix(m_theta_12,m_theta_23,m_theta_13,
-                                    m_delta_cp);
+                                    m_anti_multiplier*m_delta_cp);
     ComplexMatrix Udagger = hermitian_conjugate(m_mixing_matrix);
     ComplexMatrix onezeros(3,3);
     onezeros = 0.;
@@ -81,6 +91,7 @@ void OscParam::calculate() const
     m_matter_matrix(0,0) -= 1.0/3.0; 
     m_matter_matrix(1,1) -= 1.0/3.0; 
     m_matter_matrix(2,2) -= 1.0/3.0; 
+    m_matter_matrix *= m_anti_multiplier;
 
     m_dirty = false;
 }

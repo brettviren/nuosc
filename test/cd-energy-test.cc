@@ -27,6 +27,8 @@ int main (int argc, char *argv[])
 {
     OscParam op;                // defaults
 
+    op.set_antineutrino();
+
 //    op.set_dms31(op.get_dms31() + op.get_dms21());
 
     cerr << "mixing = \n";
@@ -45,6 +47,7 @@ int main (int argc, char *argv[])
     double maxen = 10e9;
     double step = 10e6;
     double start = 100e6;
+    bool anti_neutrino = true;
     for (energy = maxen; energy>=start; energy -= step) {
         ComplexVector amp1 = 
             nuosc_prob_matter_constant_matrix(nu0,op,energy,
