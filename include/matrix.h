@@ -18,22 +18,22 @@ bool tridiag_solve(vector<double>& a, vector<double>& b, vector<double>& c,
 
 
 // Complex scalars
-complex<double> complex_conjugate(complex<double> c);
-double complex_magnitude_squared(complex<double> c);
-double complex_magnitude(complex<double> c);
+complex<double> complex_conjugate(const complex<double>& c);
+double complex_magnitude_squared(const complex<double>& c);
+double complex_magnitude(const complex<double>& c);
 
 
 // Complex Vectors
-double vector_magnitude(ComplexVector v);
+double vector_magnitude(const ComplexVector& v);
 
-ComplexVector complex_conjugate(ComplexVector v);
+ComplexVector complex_conjugate(const ComplexVector& v);
 
 /// Complex Matrices
 /// M*
-ComplexMatrix complex_conjugate(ComplexMatrix m);
+ComplexMatrix complex_conjugate(const ComplexMatrix& m);
 /// M1.M2
-ComplexMatrix matrix_product(ComplexMatrix m1, ComplexMatrix m2);
+ComplexMatrix matrix_product(const ComplexMatrix& m1, const ComplexMatrix& m2);
 /// M*t
-ComplexMatrix hermitian_conjugate(ComplexMatrix m); // dagger
-complex<double> determinant(ComplexMatrix m);
+ComplexMatrix hermitian_conjugate(const ComplexMatrix& m); // dagger
+complex<double> determinant(const ComplexMatrix& m);
 #endif  // MATRIX_H

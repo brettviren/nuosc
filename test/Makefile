@@ -1,6 +1,6 @@
 CXX = g++ -pg  -fprofile-arcs 
 LIBS =  -lblitz -lm 
-CXXFLAGS = -I.. -O2 -g  -Wall -Wno-unused
+CXXFLAGS = -I.. -g  -Wall -Wno-unused -O2 
 
 GENTEST = prem-test
 

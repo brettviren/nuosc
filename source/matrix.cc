@@ -7,33 +7,33 @@ complex<double> phase(double phi)
     return complex<double>(cos(phi),sin(phi));
 }
 
-ComplexMatrix complex_conjugate(ComplexMatrix m)
+ComplexMatrix complex_conjugate(const ComplexMatrix& m)
 {
     ComplexMatrix mstar(3,3);
     mstar = zip(real(m), -1*imag(m), complex<double>());
     return mstar;
 }
-ComplexVector complex_conjugate(ComplexVector v)
+ComplexVector complex_conjugate(const ComplexVector& v)
 {
     ComplexVector vstar(3);
     vstar = zip(real(v), -1*imag(v), complex<double>());
     return vstar;
 }
-complex<double> complex_conjugate(complex<double> c)
+complex<double> complex_conjugate(const complex<double>& c)
 {
     return complex<double>(real(c),-imag(c));
 }
-double complex_magnitude_squared(complex<double> c)
+double complex_magnitude_squared(const complex<double>& c)
 {
     double r = real(c), i = imag(c);
     return r*r+i*i;
 }
-double complex_magnitude(complex<double> c)
+double complex_magnitude(const complex<double>& c)
 {
     return sqrt(complex_magnitude_squared(c));
 }
 
-ComplexMatrix matrix_product(ComplexMatrix m1, ComplexMatrix m2)
+ComplexMatrix matrix_product(const ComplexMatrix& m1, const ComplexMatrix& m2)
 {
     ComplexMatrix p(3,3);
     using namespace blitz::tensor; // i,j,k
@@ -41,14 +41,14 @@ ComplexMatrix matrix_product(ComplexMatrix m1, ComplexMatrix m2)
     return p;
 }
 
-ComplexMatrix hermitian_conjugate(ComplexMatrix m) // dagger
+ComplexMatrix hermitian_conjugate(const ComplexMatrix& m) // dagger
 {
     ComplexMatrix h = complex_conjugate(m);
     h.transposeSelf(secondDim,firstDim);
     return h;
 }
 
-double vector_magnitude(ComplexVector v)
+double vector_magnitude(const ComplexVector& v)
 {
     complex<double> s = 0;
     ComplexVector vstar = complex_conjugate(v);
@@ -59,7 +59,7 @@ double vector_magnitude(ComplexVector v)
     return real(sqrt(s));
 }
 
-complex<double> determinant(ComplexMatrix m)
+complex<double> determinant(const ComplexMatrix& m)
 {
     complex<double> det = 0;
     det += m(0,0)*m(1,1)*m(2,2);
