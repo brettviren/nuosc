@@ -6,7 +6,7 @@ typedef struct {
     ComplexVector nu0;          // normalized initial neutrino
 
                                 // Do we iterate on a param?
-    bool baseline_iterate, energy_iterate, density_iterate;
+    bool baseline_iterate, energy_iterate;
                                 // Only use first unless we iterate
     double baseline, blstart, blstop, blstep;
     double energy, estart, estop, estep;
@@ -18,6 +18,17 @@ typedef struct {
 GenProbConfig gpc;
 Options* options_ptr = 0;
 
+static void init_gpc()
+{
+    gpc.nu0 = ComplexVector(3);
+    gpc.nu0 = 0.0;
+    gpc.nu0(1) = 1.0;
+    gpc.baseline_iterate = gpc.energy_iterate = false;
+    gpc.baseline = 1e5;
+    gpc.energy = 1e9;
+    gpc.density = 0.0;
+    gpc.calculation = 1;
+}
 static void usage(const char* msg)
 {
     if (!options_ptr) {
@@ -61,7 +72,6 @@ static int parse_calc(const char* calctype)
     string ct(calctype);
     if (ct == "matrix") return 1;
     if (ct == "step") return 2;
-    if (ct == "prem") return 3;
     usage ("Unknown calculation type");
     return 0;
 }
@@ -77,10 +87,12 @@ void parse_args(int argc, char* argv[])
         "a|atm <dm2_atm = dm2_31 in eV^2> default = 2.5e-3 eV^2",
         "d|delta <CP phase in deg> default = 0",
         "n:neutrino <nu number> nue=1,numu=2,nutau=3, anti *= -1",
-        "D:density <constant density in g/cm^3> default = 0",
-        "c:calculation <calculation type> \"matrix\"(def), \"step\" or \"prem\"",
+        "D:density <constant density in g/cm^3> default = 0. <0 => PREM",
+        "c:calculation <calculation type> \"matrix\"(def), \"step\"",
         0
     };
+
+    init_gpc();
 
     Options options(*argv,optv);
     options_ptr = &options;
@@ -97,6 +109,7 @@ void parse_args(int argc, char* argv[])
             gpc.energy = atof(optarg);
             optarg = optitr();
             if (optarg) {
+                gpc.energy_iterate = true;
                 gpc.estart = gpc.energy;
                 gpc.estop = atof(optarg);
                 optarg = optitr();
@@ -109,6 +122,7 @@ void parse_args(int argc, char* argv[])
             gpc.baseline = atof(optarg);
             optarg = optitr();
             if (optarg) {
+                gpc.baseline_iterate = true;
                 gpc.blstart = gpc.baseline;
                 gpc.blstop = atof(optarg);
                 optarg = optitr();
@@ -160,12 +174,74 @@ void parse_args(int argc, char* argv[])
     }
 }
 
+// Uniform interface to all calculations
+typedef ComplexVector (*do_prob_f)(double energy, double baseline);
+inline ComplexVector do_vacuum_step(double energy, double baseline)
+{return nuosc_prob_vacuum_step(gpc.nu0,gpc.op,energy,baseline);}
+inline ComplexVector do_vacuum_matrix(double energy, double baseline)
+{return nuosc_prob_vacuum_matrix(gpc.nu0,gpc.op,energy,baseline);}
+inline ComplexVector do_matter_step(double energy, double baseline)
+{return nuosc_prob_matter_constant_step(gpc.nu0,gpc.op,energy,baseline,gpc.density);}
+inline ComplexVector do_matter_matrix(double energy, double baseline)
+{return nuosc_prob_matter_constant_matrix(gpc.nu0,gpc.op,energy,baseline,gpc.density);}
+inline ComplexVector do_prem_step(double energy, double baseline)
+{return nuosc_prob_matter_earth_step(gpc.nu0,gpc.op,energy,baseline);}
+inline ComplexVector do_prem_matrix(double energy, double baseline)
+{return nuosc_prob_matter_earth_matrix_piecewise(gpc.nu0,gpc.op,energy,baseline);}
+
+do_prob_f do_prob;
+
+// iterate over both energy and baseline
+void do_energy_baseline(void)
+{
+}
+
+// iterate over just energy
+void do_energy(void)
+{
+}
+
+// iterate over just baseline
+void do_baseline(void)
+{
+}
+
+// no iteration, just one shot
+void do_single()
+{
+}
 
 int main (int argc, char *argv[])
 {
     parse_args(argc,argv);
 
-    
+    if (gpc.density < 0) {
+        if (gpc.calculation == 1)
+            do_prob = do_prem_matrix;
+        else
+            do_prob = do_prem_step;
+    }
+    else if (gpc.density > 0) {
+        if (gpc.calculation == 1)
+            do_prob = do_matter_matrix;
+        else 
+            do_prob = do_matter_step;
+    }
+    else {
+        if (gpc.calculation == 1)
+            do_prob = do_vacuum_matrix;
+        else
+            do_prob = do_vacuum_step;
+    }
+
+    if (gpc.baseline_iterate && gpc.energy_iterate) 
+        do_energy_baseline();
+    if (gpc.baseline_iterate)
+        do_baseline();
+    if (gpc.energy_iterate)
+        do_energy();
+
+    do_single();
 
     return 0;
 } // end of main()
