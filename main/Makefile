@@ -5,7 +5,7 @@ LIBS = -L. -L.. -lnuosc++ $(BLITZLIB) -lm
 CXXFLAGS = -I.. -g  -Wall -Wno-unused $(BLITZINC) # -O2 
 
 OBJS = options.o util.o Config.o ProbCalc.o
-MAINS = nuosc # genprob 
+MAINS = nuosc genprob 
 
 default: $(MAINS)
 

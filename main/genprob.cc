@@ -1,5 +1,4 @@
 #include "nuosc_prob.h"
-#include "nuosc_earth.h"
 #include "options.h"
 #include "fp.h"
 #include <string>
@@ -9,68 +8,17 @@
 
 using namespace std;
 
-// Trivial iterator like ABC
-class Iterator {
-public:
-    virtual bool valid() = 0;
-    virtual double operator()(void) = 0;
-    virtual bool next() = 0;
-    virtual void dump(ostream& o) = 0;
-};
-
-// One shot iterator
-class OneNumber : public Iterator {
-    double value;
-    bool done;
-public:
-    OneNumber(double Value)
-    { value = Value; done = false; }
-    bool valid() { return !done; }
-    bool next() { done = true; return valid(); }
-    double operator()(void) { return value; }
-    void dump(ostream &o) { o << value; }
-};
-
-
-// Iterate from start to stop via linear steps
-class FlatIterator : public Iterator{
-protected:
-    double start, stop, step, value;
-public:
-    FlatIterator(double Start, double Stop, double Step) 
-    { start = Start; stop = Stop; step = Step; value = Start; }
-    bool valid() { return value >= start && value <= stop; }
-    bool next() { value += step; return valid(); }
-    double operator()(void) { return value; }
-    void dump(ostream &o) { o << start << " -> " << stop << " += " << step; }
-};
-
-// iterate over cos(zenith) evenly distributed between Start and Stop
-// values in the given number of bins.  Functor returns baseline.
-class CosZenithIterator : public FlatIterator {
-    double start, stop, step, value;
-public:
-    CosZenithIterator(int Bins,double Start=-1.0,double Stop=1.0)
-	: FlatIterator(Start,Stop,(Stop-Start)/Bins) {}
-    double operator()(void) { return earth_zenith_to_baseline(value);}
-    void dump(ostream &o) {
-	o << earth_zenith_to_baseline(start) << " -> "
-	  << earth_zenith_to_baseline(stop) << " in "
-	  << (stop-start)/step << " bins";
-    }
-};
-
-
 struct GenProbConfig {
     OscParam op;                // angles, masses, anti?
     ComplexVector nu0;          // normalized initial neutrino
     int nu_num;
     const char* nu_str;
                                 // Do we iterate on a param?
+    bool baseline_iterate, energy_iterate;
+                                // Only use first unless we iterate
+    double baseline, blstart, blstop, blstep;
+    double energy, estart, estop, estep;
 
-    Iterator *energy_itr, *baseline_itr;
-
-    double depth;		// depth of det. used with zenith
     double density;             // <0 if doing PREM, 0 for vacuum
     int calculation;            // 1=matrix, 2=step
 
@@ -81,9 +29,9 @@ struct GenProbConfig {
         nu0(1) = 1.0;
         nu_num = 2;
         nu_str = "nu_mu";
-	energy_itr = 0;
-        baseline_itr = 0;
-	depth = 0;
+        baseline_iterate = energy_iterate = false;
+        baseline = 1e5;
+        energy = 1e9;
         density = 0.0;
         calculation = 1;
     }
@@ -105,16 +53,16 @@ static void dump_gpc()
          << "deltacp = " << gpc.op.get_deltacp() << endl
          << "calculation = " << gpc.calculation 
          << (gpc.calculation == 1 ? " (matrix)" : " (step)") << endl;
-    if (gpc.baseline_itr) {
-        cerr << "baseline = ";
-	gpc.baseline_itr->dump(cerr);
-	cerr << endl;
-    }
-    if (gpc.energy_itr) {
-        cerr << "energy = ";
-	gpc.energy_itr->dump(cerr);
-	cerr << endl;
-    }
+    if (gpc.baseline_iterate)
+        cerr << "baseline = " << gpc.blstart << " -> " 
+             << gpc.blstop << " += " << gpc.blstep << endl;
+    else
+        cerr << "baseline = " << gpc.baseline << endl;
+    if (gpc.energy_iterate)
+        cerr << "energy = " << gpc.estart << " -> " 
+             << gpc.estop << " += " << gpc.estep << endl;
+    else
+        cerr << "energy = " << gpc.energy << endl;
     int n = gpc.denlu.size();
     if (n) {
         cerr << "density lookup table = " << endl;
@@ -209,11 +157,8 @@ void parse_args(int argc, char* argv[])
     const char* optv[] = {
         "e:energy <energy> [GeV] default = 1 GeV",
         "b:baseline <baseline> [km] default = 1 km",
-	"z:zenith <zenith angle> [deg] default unused",
-	"h:depth <depth of detector> [km] default unused (use with Zenith)",
         "E+energy-range <Estart Estop Estep> [GeV]",
         "B+baseline-range <Bstart Bstop Bstep> [km]",
-	"Z+zenith-range <Zstart Zstop Zsetp> [deg]",
         "t+theta <theta_12 theta_23 theta_13> degrees",
         "S+sin  <sin^2(2theta_12) sin^2(2theta_23) sin^2(2theta_13)>",
         "s:sol <dm2_sol = dm2_21 in eV^2> default = 5.0e-5 eV^2",
@@ -238,50 +183,32 @@ void parse_args(int argc, char* argv[])
         switch (optchar) {
         case 'e':
             if (!optarg) usage("No energy given with -e");
-            gpc.energy_itr = new OneNumber(atof(optarg)*1e9);
+            gpc.energy = atof(optarg)*1e9;
+            gpc.energy_iterate = false;
             break;
-        case 'E': {
-	    double start = atof(optarg)*1e9;
+        case 'E':
+            gpc.energy_iterate = true;
+            gpc.estart = atof(optarg)*1e9;
             optarg = optitr();
-            double stop = atof(optarg)*1e9;
-	    double step = (stop-start)/100.*1e9;
+            gpc.estop = atof(optarg)*1e9;
             optarg = optitr();
-            if (optarg) step = atof(optarg)*1e9;
-	    gpc.energy_itr = new FlatIterator(start,stop,step);
+            if (!optarg) gpc.estep = (gpc.estop-gpc.estart)/100.*1e9;
+            else gpc.estep = atof(optarg)*1e9;
             break;
-	}
         case 'b':
             if (!optarg) usage("No baseline given with -b");
-            gpc.baseline_itr = new OneNumber(atof(optarg)*1e5);
+            gpc.baseline = atof(optarg)*1e5;
+            gpc.baseline_iterate = false;
             break;
-        case 'B': {
-	    double start = atof(optarg)*1e5;
+        case 'B':
+            gpc.baseline_iterate = true;
+            gpc.blstart = atof(optarg)*1e5;
             optarg = optitr();
-            double stop = atof(optarg)*1e5;
-	    double step = (stop-start)/100.*1e5;
+            gpc.blstop = atof(optarg)*1e5;
             optarg = optitr();
-            if (optarg) step = atof(optarg)*1e5;
-	    gpc.baseline_itr = new FlatIterator(start,stop,step);
+            if (!optarg) gpc.blstep = (gpc.blstop-gpc.blstart)/100.*1e5;
+            else gpc.blstep = atof(optarg)*1e5;
             break;
-	}
-        case 'z':
-            if (!optarg) usage("No baseline given with -b");
-            gpc.baseline_itr =
-		new OneNumber(earth_zenith_to_baseline(acos(atof(optarg)/180.*M_PI)));
-            break;
-        case 'Z': {
-	    double start = acos(atof(optarg)/180.*M_PI);
-            optarg = optitr();
-            double stop = acos(atof(optarg)/180.*M_PI);
-	    int bins = 100;
-            optarg = optitr();
-            if (optarg) bins = atoi(optarg);
-	    gpc.baseline_itr = new CosZenithIterator(bins,start,stop);
-            break;
-	}
-	case 'h':
-	    gpc.depth = atof(optarg)*1e5;
-	    break;
         case 't':
             gpc.op.set_theta12(d2r(optarg));
             optarg = optitr();
@@ -360,6 +287,41 @@ inline ComplexVector do_lookup_matrix(double energy, double baseline)
 
 do_prob_f do_prob;
 
+// iterate over both energy and baseline
+void do_energy_baseline(void)
+{
+    for (double baseline = gpc.blstart; baseline <= gpc.blstop; baseline += gpc.blstep) {
+        for (double energy = gpc.estart; energy <= gpc.estop; energy += gpc.estep) {
+            ComplexVector nu = do_prob(energy,baseline);
+            output(energy,baseline,nu);
+        }
+    }
+}
+// iterate over just energy
+void do_energy(void)
+{
+    for (double energy = gpc.estart; energy <= gpc.estop; energy += gpc.estep) {
+        ComplexVector nu = do_prob(energy,gpc.baseline);
+        output(energy,gpc.baseline,nu);
+    }
+}
+
+// iterate over just baseline
+void do_baseline(void)
+{
+    for (double baseline = gpc.blstart; baseline <= gpc.blstop; baseline += gpc.blstep) {
+        ComplexVector nu = do_prob(gpc.energy,baseline);
+        output(gpc.energy,baseline,nu);
+    }
+}
+
+// no iteration, just one shot
+void do_single()
+{
+    ComplexVector nu = do_prob(gpc.energy,gpc.baseline);
+    output(gpc.energy,gpc.baseline,nu);
+}
+
 
 int main (int argc, char *argv[])
 {
@@ -367,9 +329,10 @@ int main (int argc, char *argv[])
 
     parse_args(argc,argv);
 
-    // Pick probability calculator
     if (gpc.denlu.size() > 0) {
         do_prob = do_lookup_matrix;
+        do_energy(); // only support energy iter with LU for now
+        return 0;
     }
     else if (gpc.density < -0.0001) {
         if (gpc.calculation == 1)
@@ -390,14 +353,13 @@ int main (int argc, char *argv[])
             do_prob = do_vacuum_step;
     }
 
-    for (double baseline = 0; gpc.baseline_itr->valid(); gpc.baseline_itr->next()) {
-	baseline = (*gpc.baseline_itr)();
-	for (double energy = 0; gpc.energy_itr->valid(); gpc.energy_itr->next()) {
-	    energy = (*gpc.energy_itr)();
-	    ComplexVector nu = do_prob(energy,baseline);
-            output(energy,baseline,nu);
-	}
-    }
+    if (gpc.baseline_iterate && gpc.energy_iterate) 
+        do_energy_baseline();
+    else if (gpc.baseline_iterate)
+        do_baseline();
+    else if (gpc.energy_iterate)
+        do_energy();
+    else do_single();
 
     return 0;
 } // end of main()
