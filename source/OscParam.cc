@@ -53,9 +53,12 @@ void OscParam::Copy(const OscParam& other)
     m_dirty = true;
 }
 
-void OscParam::set_antineutrino()
+void OscParam::set_antineutrino(bool is_anti)
 {
-    m_anti_multiplier = -1.0;
+    if (is_anti)
+	m_anti_multiplier = -1.0;
+    else
+	m_anti_multiplier = 1.0;
 }
 bool OscParam::is_antineutrino() const
 {

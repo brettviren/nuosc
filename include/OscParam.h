@@ -1,6 +1,6 @@
 /**
  *
- * $Id: OscParam.h,v 1.9 2003-07-18 17:33:08 bviren Exp $
+ * $Id: OscParam.h,v 1.10 2005-01-13 20:04:16 bviren Exp $
  *
  * \class OscParam
  *
@@ -79,7 +79,7 @@ public:
     /// (matter_matrix -> -matter_matrix).  The fundamental
     /// parameters, in particular that returned by get_deltatcp() are
     /// *NOT* modified.
-    void set_antineutrino();
+    void set_antineutrino(bool is_anti=true);
     bool is_antineutrino() const;
 
     /// Returns "U" the vacuum mixing matrix for the given parameters
