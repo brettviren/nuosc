@@ -1,6 +1,6 @@
 /**
  *
- * $Id: nuosc_matrix.h,v 1.2 2002-11-20 22:34:55 bviren Exp $
+ * $Id: nuosc_matrix.h,v 1.3 2002-11-21 22:40:59 bviren Exp $
  *
  * \class nuosc_matrix
  *
@@ -19,7 +19,9 @@
 #ifndef NUOSC_H
 #define NUOSC_H
 
-#include "octave.h"
+#include "nuosc_octave.h"
+
+extern complex<double> EYE;
 
 // Matrix builders.
 ComplexMatrix cp_phase_matrix(double cp_phase);
@@ -28,8 +30,8 @@ ComplexMatrix mixing_matrix(double theta12, // theta1 in Marciano's notation
                             double theta23, // theta2 in Marciano's notation
                             double theta13, // theta3 in Marciano's notation
                             double cp_phase);
-ComplexMatrix mass_squared_matrix(double dm2_sol, double dm2_atm);
-ComplexMatrix mass_state_transport_matrix(double dm2sol, double dm2atm, // eV^2
+ComplexMatrix mass_squared_matrix(double dm2_21, double dm2_31);
+ComplexMatrix mass_state_transport_matrix(double dm2_21, double dm2_31, // eV^2
                                           double energy, // eV
                                           double distance); // cm
 

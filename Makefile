@@ -1,5 +1,6 @@
 
-SRCS = $(wildcard nuosc*.cc)
+
+SRCS = $(wildcard *.cc)
 OBJS = $(addsuffix .o, $(basename $(SRCS)))
 
 default: nuosc.oct
@@ -9,4 +10,5 @@ nuosc.oct: $(SRCS)
 
 clean:
 	rm -f *~ $(OBJS) *.oct
+
 

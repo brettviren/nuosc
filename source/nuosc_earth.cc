@@ -1,5 +1,5 @@
 #include <assert.h>
-#include "earth.h"
+#include "nuosc_earth.h"
 
 const double Rearth = 6371.0e5; // in cm
 
@@ -31,6 +31,12 @@ double earth_electron_fraction(double d, double D)
     if (rad < 3480.0e5) return 0.466; // core
     if (rad >= 3480e5 && rad < 6346.6e5) return 0.494; // mantle
     return 0.5;                 // crust
+}
+double earth_electron_fraction_by_density(double density)
+{
+    if (density >= 9.90) return 0.466; // core: rad < 3480e5 cm
+    if (density >= 3.38) return 0.494; // mantle: rad < 6346.6e5 cm
+    return 0.5; // crust
 }
 
 // Return Earth density in g/cm^3 according to table 1 in hep-ph/0002149.

@@ -1,6 +1,6 @@
 /**
  *
- * $Id: OscParam.h,v 1.2 2002-11-20 22:34:55 bviren Exp $
+ * $Id: OscParam.h,v 1.3 2002-11-21 22:40:58 bviren Exp $
  *
  * \class OscParam
  *
@@ -49,7 +49,7 @@
 #ifndef OSCPARAM_H
 #define OSCPARAM_H
 
-#include <libnuosc++/matrix.h>
+#include "nuosc_octave.h"
 
 class OscParam
 {
@@ -67,24 +67,24 @@ public:
              double delta_cp = 0.0); 
     ~OscParam();
 
-    double get_dm2_21() const;        // ev^2
-    double get_dm2_31() const;        // ev^2
-    double get_theta_12() const;      // rad
-    double get_theta_23() const;      // rad
-    double get_theta_13() const;      // rad
-    double get_delta_cp() const;      // rad
-    double get_s22t12() const;        // as sin^2(2theta)
-    double get_s22t23() const;        // as sin^2(2theta)
-    double get_s22t13() const;        // as sin^2(2theta)
+    double get_dms21() const;        // ev^2
+    double get_dms31() const;        // ev^2
+    double get_theta12() const;      // rad
+    double get_theta23() const;      // rad
+    double get_theta13() const;      // rad
+    double get_deltacp() const;      // rad
+    double get_ss2t12() const;        // as sin^2(2theta)
+    double get_ss2t23() const;        // as sin^2(2theta)
+    double get_ss2t13() const;        // as sin^2(2theta)
 
     ComplexMatrix get_mixing_matrix() const;
 
-    void set_dm2_21(double ev2);
-    void set_dm2_31(double ev2);
-    void set_theta_12(double deg);
-    void set_theta_23(double deg);
-    void set_theta_13(double deg);
-    void set_delta_cp(double deg);
+    void set_dms21(double ev2);
+    void set_dms31(double ev2);
+    void set_theta12(double deg);
+    void set_theta23(double deg);
+    void set_theta13(double deg);
+    void set_deltacp(double deg);
     
 private:
 
@@ -92,9 +92,8 @@ private:
     double m_theta_12, m_theta_23, m_theta_13;
     double m_delta_cp;
     
-    bool m_dirty_mixing;
-
-    ComplexMatrix m_mixing_matrix;
+    mutable bool m_dirty_mixing;
+    mutable ComplexMatrix m_mixing_matrix;
     
 };                              // end of class OscParam
 

@@ -1,5 +1,7 @@
 #include "nuosc_matrix.h"
 
+complex<double> EYE(0,1);
+
 ComplexMatrix cp_phase_matrix(double phi)
 {
     ComplexMatrix k(3,3,complex<double>(0.0,0.0));
@@ -60,15 +62,14 @@ ComplexMatrix mixing_matrix(double theta12, // theta1 in Marciano's notation
     return u;
 }
 
-// dm2_sol = dm2_21, dm2_atm = dm2_32
-ComplexMatrix mass_squared_matrix(double dm2_sol, double dm2_atm)
+ComplexMatrix mass_squared_matrix(double dm2_21, double dm2_31)
 {
     ComplexMatrix m(3,3,complex<double>(0.0,0.0));
 
     // have subtracted m1^2 from diagonal.
     m(0,0) = 0;
-    m(1,1) = dm2_sol;
-    m(2,2) = dm2_atm + dm2_sol;
+    m(1,1) = dm2_21;
+    m(2,2) = dm2_31;
     return m;
 }
 

@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////
 //
-// $Id: nuosc_earth.h,v 1.1 2002-11-21 13:54:20 bviren Exp $
+// $Id: nuosc_earth.h,v 1.2 2002-11-21 22:40:59 bviren Exp $
 //
 // earth
 //
@@ -28,9 +28,13 @@ double earth_radius_to_dist_end(double r, double D);
 // uses the above.
 double earth_density(double d, double D);
 double earth_density_by_radius(double rad);
+
 // Return Y_e, the electron fraction.  This is based on a crude
 // estimation using numbers from hep-ph/0002149.
 double earth_electron_fraction(double d, double D);
+// optimization of above.  Makes use of monotonic decrease of density
+// with radius.
+double earth_electron_fraction_by_density(double density);
 
 int earth_get_slant_distances(double x0[], double xf[], double D);
 int earth_radius_number(double D);
