@@ -23,6 +23,8 @@ OscParam::~OscParam()
 {
 }
 OscParam::OscParam(const OscParam& that)
+    : m_mixing_matrix(3,3)
+    , m_matter_matrix(3,3)
 {
     this->Copy(that);
 }
@@ -35,6 +37,11 @@ OscParam& OscParam::operator=(const OscParam& rhs)
 
 void OscParam::Copy(const OscParam& other)
 {
+    ComplexMatrix m1(3,3);
+    ComplexMatrix m2(3,3);
+    m_mixing_matrix = m1;
+    m_matter_matrix = m2;
+
     this->m_dm2_21 = other.m_dm2_21;
     this->m_dm2_31 = other.m_dm2_31;
     this->m_theta_12 = other.m_theta_12;

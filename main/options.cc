@@ -26,12 +26,13 @@
 #ifdef USE_STDIO
 # include <stdio.h>
 #else
-# include <iostream.h>
+# include <iostream>
+using namespace std;
 #endif
 
 // #include <stdlib.h>
 #include <ctype.h>
-#include <string.h>
+#include <string>
 
 #include "options.h"
 
