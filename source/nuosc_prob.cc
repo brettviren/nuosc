@@ -79,7 +79,7 @@ ComplexVector nuosc_prob_vacuum_step(ComplexVector initial_neutrino,
 
 // This is taken from 
 // Ohlsson & Snellman J. Math. Phys. 41, No 5 May 2000
-// hep-ph/9910564
+// hep-ph/9910546
 ComplexMatrix constant_density_evolution_matrix(const OscParam& op,
                                                 double energy,
                                                 double distance,
@@ -227,6 +227,39 @@ ComplexVector nuosc_prob_prem_matrix(ComplexVector initial_neutrino,
 //        cerr << "density = " << density << endl;
 
         vec = nuosc_prob_constant_matrix(vec,op,energy,xf[i]-x0[i],density);
+    }
+//    cerr << "nu=" << vec << endl;
+    return vec;
+}
+
+// Jump the neutrino state through the earth in constant density
+// pieces determined by the given lookup tables.  "n" gives the lenght
+// of the lookup tables.  The pos is considered the center of a bin
+// extending from half way between the previous to half way between
+// the subsequent pos.  The begin (end) position is assumed to be at 0
+// (baseline).
+
+ComplexVector nuosc_prob_lookup_matrix(ComplexVector initial_neutrino,
+                                       const OscParam& op,
+                                       double energy, double baseline,
+                                       const std::vector<double>& poslu,
+                                       const std::vector<double>& denlu)
+{
+    ComplexVector vec(3);
+    vec = initial_neutrino;
+    int n = poslu.size();
+    for (int i=0; i < n; ++i) {
+        double l_i = 0;
+        double l_f = baseline;
+
+        if (i > 0) 
+            l_i = poslu[i] - 0.5*(poslu[i] - poslu[i-1]);
+
+        if (i < n-1)
+            l_f = poslu[i] + 0.5*(poslu[i+1] - poslu[i]);
+
+        cerr << "[ " << l_i << " " << l_f << " ]\n";
+        vec = nuosc_prob_constant_matrix(vec,op,energy,l_f - l_i,denlu[i]);
     }
 //    cerr << "nu=" << vec << endl;
     return vec;
