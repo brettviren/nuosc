@@ -220,11 +220,13 @@ ComplexVector nuosc_prob_prem_matrix(ComplexVector initial_neutrino,
 
     int n = earth_get_slant_distances(x0,xf,baseline);
 
+    //cerr << n << " slant distance with baseline " << baseline << endl;
+
     ComplexVector vec(3);
     vec = initial_neutrino;
     for (int i=0; i < n; ++i) {
         double density = earth_average_region_density(x0[i],xf[i],baseline);
-//        cerr << "density = " << density << endl;
+        //cerr << "density = " << density << endl;
 
         vec = nuosc_prob_constant_matrix(vec,op,energy,xf[i]-x0[i],density);
     }

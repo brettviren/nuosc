@@ -8,8 +8,8 @@ int main (int argc, char *argv[])
 {
     const char* desc[] = {
 	"zen:0.0,180.0,1.8,1",
-	"cos:-1,0,0.01,1",
-	"log:-1,1,.02",
+	"cos:-1,0,0.0025,1",
+	"log:-1,1,.005",
 	0
     };
 

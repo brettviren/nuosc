@@ -104,11 +104,13 @@ const double  earth_region_radii[earth_nradii] = {
 
 int earth_radius_number(double D)
 {
-    int nradii;
+    if (D > 2*Rearth) return -1;
     double Rsineta = sqrt(Rearth*Rearth - 0.25*D*D);
-    for(nradii = 0; nradii < earth_nradii-1; ++nradii) {
-        if (earth_region_radii[nradii] > Rsineta &&
-            earth_region_radii[nradii+1] < Rsineta) return nradii;
+    int nradii = earth_nradii;
+    while (nradii) {
+	--nradii;
+	if (earth_region_radii[nradii] >= Rsineta)
+	    return nradii;
     }
     return -1;
 }
@@ -159,7 +161,7 @@ int earth_get_slant_distances(double x0[], double xf[], double D)
 
     int radius_number = earth_radius_number(D);
     if (radius_number < 0) return radius_number;
-    assert(radius_number < earth_max_radius_number);
+    assert(radius_number <= earth_max_radius_number);
 
     int ind=0;
     for (int n = 0; n < radius_number; ++n, ++ind) {
