@@ -1,6 +1,6 @@
 /**
  *
- * $Id: OscParam.h,v 1.1 2002-10-20 00:33:32 bviren Exp $
+ * $Id: OscParam.h,v 1.2 2002-11-20 22:34:55 bviren Exp $
  *
  * \class OscParam
  *
@@ -67,16 +67,17 @@ public:
              double delta_cp = 0.0); 
     ~OscParam();
 
-    double get_dm2_21();        // ev^2
-    double get_dm2_31();        // ev^2
-    double get_theta_12();      // rad
-    double get_theta_23();      // rad
-    double get_theta_13();      // rad
-    double get_delta_cp();      // rad
-    double get_s22t12();        // as sin^2(2theta)
-    double get_s22t23();        // as sin^2(2theta)
-    double get_s22t13();        // as sin^2(2theta)
+    double get_dm2_21() const;        // ev^2
+    double get_dm2_31() const;        // ev^2
+    double get_theta_12() const;      // rad
+    double get_theta_23() const;      // rad
+    double get_theta_13() const;      // rad
+    double get_delta_cp() const;      // rad
+    double get_s22t12() const;        // as sin^2(2theta)
+    double get_s22t23() const;        // as sin^2(2theta)
+    double get_s22t13() const;        // as sin^2(2theta)
 
+    ComplexMatrix get_mixing_matrix() const;
 
     void set_dm2_21(double ev2);
     void set_dm2_31(double ev2);
@@ -85,8 +86,6 @@ public:
     void set_theta_13(double deg);
     void set_delta_cp(double deg);
     
-    ComplexMatrix get_mixing_matrix();
-
 private:
 
     double m_dm2_21, m_dm2_31;

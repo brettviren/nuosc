@@ -1,6 +1,6 @@
 /**
  *
- * $Id: nuosc_matrix.h,v 1.1 2002-10-20 00:33:32 bviren Exp $
+ * $Id: nuosc_matrix.h,v 1.2 2002-11-20 22:34:55 bviren Exp $
  *
  * \class nuosc_matrix
  *
@@ -8,10 +8,6 @@
  *
  * \brief functions returning neutrino oscilation related matrices
  *
- * Note: All ComplexMatrix's are constructed via:
- *     ComplexMatrix m(Range(1,3),Range(1,3))
- * This means that their indices start from *1*.
- * 
  * Note: All angles are in radians.
  *
  * Contact: bv@bnl.gov
@@ -23,7 +19,7 @@
 #ifndef NUOSC_H
 #define NUOSC_H
 
-#include "matrix.h"
+#include "octave.h"
 
 // Matrix builders.
 ComplexMatrix cp_phase_matrix(double cp_phase);
