@@ -1,6 +1,6 @@
 /**
  *
- * $Id: constants.h,v 1.1 2002-11-23 22:23:06 bviren Exp $
+ * $Id: constants.h,v 1.2 2003-07-07 22:20:54 bviren Exp $
  *
  * \class constants
  *
@@ -20,7 +20,7 @@
 #include <complex>
 
 // sqrt(-1);
-extern const complex<double> EYE;
+extern const std::complex<double> EYE;
 
 // hbar*c in eV*cm
 extern const double hbarc;

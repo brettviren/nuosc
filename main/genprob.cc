@@ -4,6 +4,7 @@
 #include <string>
 #include <cstring>
 
+using namespace std;
 
 struct GenProbConfig {
     OscParam op;                // angles, masses, anti?

@@ -1,6 +1,6 @@
 /**
  *
- * $Id: nuosc_prob.h,v 1.6 2002-12-06 18:56:24 bviren Exp $
+ * $Id: nuosc_prob.h,v 1.7 2003-07-07 22:20:54 bviren Exp $
  *
  * \class nuosc_prob
  *
@@ -22,7 +22,7 @@
 #include <vector>
 
 /// Return |(amp)(amp*)|
-vector<double> nuosc_amplitude_to_prob(ComplexVector amp);
+std::vector<double> nuosc_amplitude_to_prob(ComplexVector amp);
 
 
 /// Probability for no matter, calculated with analytically:

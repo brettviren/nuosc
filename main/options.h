@@ -17,13 +17,17 @@
 //
 //    07/31/97	Brad Appleton	<bradapp@enteract.com>
 //    - Added PARSE_POS control flag and POSITIONAL return value
+//
+//    ca 07/07/03 Brett Viren <bv@bnl.gov> 
+//    - Fix ostream/istream stuff for G++ 3.3
 // ^^**************************************************************************
 
 #ifndef _options_h
 #define _options_h
 
-class  ostream;
-class  istream;
+#include <iosfwd>
+//class  ostream;
+//class  istream;
 
 // Abstract class to iterate through options/arguments
 //
@@ -166,7 +170,7 @@ public:
    //
 class OptIstreamIter : public OptIter {
 private:
-   istream & is ;
+   std::istream & is ;
    OptStrTokIter * tok_iter ;
 
    void
@@ -175,7 +179,7 @@ private:
 public:
    static const unsigned  MAX_LINE_LEN ;
 
-   OptIstreamIter(istream & input);
+   OptIstreamIter(std::istream & input);
 
    virtual
    ~OptIstreamIter(void);
@@ -445,7 +449,7 @@ public:
       // usage() prints options usage (followed by any positional arguments
       // listed in the parameter "positionals") on the given outstream
    void
-   usage(ostream & os, const char * positionals) const ;
+   usage(std::ostream & os, const char * positionals) const ;
 
       // operator() iterates through the arguments as necessary (using the
       // given iterator) and returns the character value of the option

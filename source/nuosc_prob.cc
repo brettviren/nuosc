@@ -7,6 +7,8 @@
 #include "NuEvolverPrem.h"
 #include <cmath>                // for M_PI
 
+using namespace std;
+
 vector<double> nuosc_amplitude_to_prob(ComplexVector amp)
 {
     vector<double> p;

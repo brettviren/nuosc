@@ -1,3 +1,4 @@
+#CXX = g++ # -pg  -fprofile-arcs 
 CXX = g++ # -pg  -fprofile-arcs 
 CXXFLAGS =  -Wall -g  -Wno-unused # -O2
 BLITZLIB = -lblitz
@@ -22,6 +23,7 @@ mains:
 
 clean:
 	rm -f *~ $(OBJS) $(LIB) $(LIBA) *.d *.da
+	$(MAKE) -C main clean
 
 dist:
 	cd .. && tar -czf libnuosc++.tar.gz libnuosc++/{Makefile,*.{cc,h},{test,main}/{Makefile,*.{cc,h}}} > /dev/null 2>&1 || true

@@ -1,6 +1,8 @@
 #include "nuosc_matrix.h"
 #include "constants.h"
 
+using namespace std;
+
 ComplexMatrix cp_phase_matrix(double phi)
 {
     ComplexMatrix k(3,3);

@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////
 //
-// $Id: OdeFunc.h,v 1.3 2002-12-04 22:00:44 bviren Exp $
+// $Id: OdeFunc.h,v 1.4 2003-07-07 22:20:54 bviren Exp $
 //
 // OdeFunc
 //
@@ -69,8 +69,8 @@ public:
 
     // Call before a Solve()
     void ClearSteps() { m_steps.clear(); m_values.clear(); }
-    vector<double> GetSteps(void) { return m_steps; }
-    vector<ComplexVector> GetStepValues(void) { return m_values; }
+    std::vector<double> GetSteps(void) { return m_steps; }
+    std::vector<ComplexVector> GetStepValues(void) { return m_values; }
 
     // Mostly internal.  Do a step with the current stepper.
     ComplexVector Step(double x, double& step_size, ComplexVector y);
@@ -113,8 +113,8 @@ private:
                              ComplexVector y, double prec);
 
 
-    vector<double> m_steps;
-    vector<ComplexVector> m_values;
+    std::vector<double> m_steps;
+    std::vector<ComplexVector> m_values;
     bool m_save_steps;
 };
 

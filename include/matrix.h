@@ -4,23 +4,24 @@
 #include <vector>
 #include <blitz/array.h>
 
-typedef blitz::Array<complex<double>,2> ComplexMatrix;
-typedef blitz::Array<complex<double>,1> ComplexVector;
+typedef blitz::Array<std::complex<double>,2> ComplexMatrix;
+typedef blitz::Array<std::complex<double>,1> ComplexVector;
 
 // Util functions.
-complex<double> phase(double phi);
+std::complex<double> phase(double phi);
 
 // solve a system of equations with a tri-diagonal matrix a'la
 // N.R. a[0] and c[n-2] is not used, b is the matrix diagonal, a is
 // just below, c is just above.  Return false if fail.
-bool tridiag_solve(vector<double>& a, vector<double>& b, vector<double>& c,
-                   vector<double>& rhs, vector<double>& res);
+bool tridiag_solve(std::vector<double>& a, std::vector<double>& b, 
+                   std::vector<double>& c,
+                   std::vector<double>& rhs, std::vector<double>& res);
 
 
 // Complex scalars
-complex<double> complex_conjugate(const complex<double>& c);
-double complex_magnitude_squared(const complex<double>& c);
-double complex_magnitude(const complex<double>& c);
+std::complex<double> complex_conjugate(const std::complex<double>& c);
+double complex_magnitude_squared(const std::complex<double>& c);
+double complex_magnitude(const std::complex<double>& c);
 
 
 // Complex Vectors
@@ -35,5 +36,5 @@ ComplexMatrix complex_conjugate(const ComplexMatrix& m);
 ComplexMatrix matrix_product(const ComplexMatrix& m1, const ComplexMatrix& m2);
 /// M*t
 ComplexMatrix hermitian_conjugate(const ComplexMatrix& m); // dagger
-complex<double> determinant(const ComplexMatrix& m);
+std::complex<double> determinant(const ComplexMatrix& m);
 #endif  // MATRIX_H

@@ -1,6 +1,7 @@
 #include "OdeFunc.h"
 
 using namespace blitz;
+using namespace std;
 
 
 
@@ -138,11 +139,20 @@ ComplexVector OdeFunc::runge_kutta_4th_stepper(double x, double& step_size,
 {
     OdeFunc& ode_func = (*this);
 
-    ComplexVector k1(3), k2(3), k3(3), k4(3);
+    // tmp is used to collapse the ArrayExpr templates into an actual Array
+    ComplexVector k1(3), k2(3), k3(3), k4(3), tmp(3);
+
     k1 = step_size*ode_func(y,               x);
-    k2 = step_size*ode_func(y+0.5*k1, x+0.5*step_size);
-    k3 = step_size*ode_func(y+0.5*k2, x+0.5*step_size);
-    k4 = step_size*ode_func(y+    k3, x+    step_size);
+
+    tmp = y+0.5*k1;
+    k2 = step_size*ode_func(tmp, x+0.5*step_size);
+    
+    tmp = y+0.5*k2;
+    k3 = step_size*ode_func(tmp, x+0.5*step_size);
+
+    tmp = y+ k3;
+    k4 = step_size*ode_func(tmp, x+    step_size);
+
     ComplexVector ret(3);
     ret = y + (1.0/6.0) * (k1 + 2.0*k2 + 2.0*k3 + k4);
     this->SaveStep(y,x+step_size);
@@ -170,7 +180,8 @@ void OdeFunc::condition_step_size(double x, double& h, double mult_tol,
 ComplexVector OdeFunc::runge_kutta_adaptive_stepper(double x, double& h,
                                                     ComplexVector y, double prec)
 {
-    ComplexVector k1(3), k2(3), k3(3), k4(3), k5(3), k6(3);
+    // tmp is used to collapse the ArrayExpr templates into an actual Array
+    ComplexVector k1(3), k2(3), k3(3), k4(3), k5(3), k6(3), tmp(3);
     ComplexVector y5(3), dy(3);
 
     // Cash-Karp parameters for embedded R-K.
@@ -186,11 +197,21 @@ ComplexVector OdeFunc::runge_kutta_adaptive_stepper(double x, double& h,
     OdeFunc& ode_func = (*this);
 
     k1 = h*ode_func(y,       x);
-    k2 = h*ode_func(y+b2[1]*k1,x+a[2]*h);
-    k3 = h*ode_func(y+b3[1]*k1+b3[2]*k2,x+a[3]*h);
-    k4 = h*ode_func(y+b4[1]*k1+b4[2]*k2+b4[3]*k3,x+a[4]*h);
-    k5 = h*ode_func(y+b5[1]*k1+b5[2]*k2+b5[3]*k3+b5[4]*k4,x+a[5]*h);
-    k6 = h*ode_func(y+b6[1]*k1+b6[2]*k2+b6[3]*k3+b6[4]*k4+b6[5]*k5,x+a[6]*h);
+
+    tmp = y+b2[1]*k1;
+    k2 = h*ode_func(tmp,x+a[2]*h);
+
+    tmp = y+b3[1]*k1+b3[2]*k2;
+    k3 = h*ode_func(tmp,x+a[3]*h);
+
+    tmp = y+b4[1]*k1+b4[2]*k2+b4[3]*k3;
+    k4 = h*ode_func(tmp,x+a[4]*h);
+    
+    tmp = y+b5[1]*k1+b5[2]*k2+b5[3]*k3+b5[4]*k4;
+    k5 = h*ode_func(tmp,x+a[5]*h);
+
+    tmp = y+b6[1]*k1+b6[2]*k2+b6[3]*k3+b6[4]*k4+b6[5]*k5;
+    k6 = h*ode_func(tmp,x+a[6]*h);
 
     // 5th order R-K step and 5th/4th order diff
     y5 = y + c5[1]*k1 + c5[2]*k2 + c5[3]*k3 + c5[4]*k4 + c5[5]*k5 + c5[6]*k6;
