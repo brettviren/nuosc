@@ -1,6 +1,6 @@
 /**
  *
- * $Id: OscParam.h,v 1.8 2002-12-05 18:55:17 bviren Exp $
+ * $Id: OscParam.h,v 1.9 2003-07-18 17:33:08 bviren Exp $
  *
  * \class OscParam
  *
@@ -95,6 +95,10 @@ public:
     void set_theta13(double deg);
     void set_deltacp(double deg);
     
+    // needed to deal with the matrix cacheing
+    OscParam(const OscParam& that);
+    OscParam& operator=(const OscParam& rhs);
+
 private:
 
     double m_dm2_21, m_dm2_31;
@@ -107,6 +111,10 @@ private:
     mutable bool m_dirty;
 
     double m_anti_multiplier;
+
+    // helper for copy ctro / assignment
+    void Copy(const OscParam& other);
+
 };                              // end of class OscParam
 
 

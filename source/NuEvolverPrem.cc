@@ -23,13 +23,23 @@ ComplexVector NuEvolverPrem::operator()(ComplexVector nu, double x) const
     if (this->get_oscparams().is_antineutrino()) A *= -1.0;
 
     // Get COPY of the vacuum term and add the matter term
-    ComplexMatrix m(3,3);
-    m = this->NuEvolverVacuum::get_transform();
+    NuEvolverPrem* nonconstthis = const_cast<NuEvolverPrem*>(this);
+    ComplexMatrix m = nonconstthis->NuEvolverVacuum::get_transform();
     m(0,0) += -EYE*A;
 
-    using namespace blitz::tensor; // for i,j
     ComplexVector ret(3);
-    ret = sum(m(i,j)*nu(j),j);
+    ret(0) = ret(1) = ret(2) = 0.0;
 
+#if 0
+    blitz::firstIndex i;
+    blitz::secondIndex j;
+    ret = blitz::sum(m(i,j)*nu(j),j);
+#else
+    for (int i=0; i<3; ++i) {
+        for (int j=0; j<3; ++j) {
+            ret(i) += m(i,j)*nu(j);
+        }
+    }
+#endif
     return ret;
 }

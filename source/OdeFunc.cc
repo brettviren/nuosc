@@ -15,6 +15,12 @@ OdeFunc::~OdeFunc()
 {
 }
 
+void OdeFunc::ClearSteps()
+{
+    m_steps.clear(); 
+    m_values.clear(); 
+}
+
 void OdeFunc::SetStepper(OdeFunc::StepperType st)
 {
     m_prec = 0;

@@ -1,6 +1,8 @@
-CXX = g++ # -pg  -fprofile-arcs 
-LIBS = -L.. -lnuosc++ -lblitz -lm 
-CXXFLAGS = -I.. -g  -Wall -Wno-unused # -O2 
+include ../config.mk
+
+
+LIBS = -L.. -lnuosc++ $(BLITZLIB) -lm 
+CXXFLAGS = -I.. -g  -Wall -Wno-unused $(BLITZINC) # -O2 
 
 OBJS = options.o
 MAINS = genprob

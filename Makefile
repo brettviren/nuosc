@@ -1,7 +1,6 @@
-#CXX = g++ # -pg  -fprofile-arcs 
-CXX = g++ # -pg  -fprofile-arcs 
-CXXFLAGS =  -Wall -g  -Wno-unused # -O2
-BLITZLIB = -lblitz
+include config.mk
+
+CXXFLAGS =  -Wall -g  -Wno-unused $(BLITZINC) # -O2
 LIBS = $(BLITZLIB)
 
 SRCS = $(wildcard *.cc)
@@ -10,8 +9,6 @@ LIB = libnuosc++.so
 LIBA = libnuosc++.a
 LIBSRC = $(SRCS)
 
-# Where to install: PREFIX/{lib,bin,include}
-export PREFIX = /home/bviren
 
 default: $(LIB)  mains # tests
 

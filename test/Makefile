@@ -1,8 +1,9 @@
-CXX = g++ # -pg  -fprofile-arcs 
-LIBS =  -lblitz -lm 
-CXXFLAGS = -I.. -g  -Wall -Wno-unused -O2 
+include ../config.mk
 
-GENTEST = prem-test
+LIBS =  $(BLITZLIB) -lm 
+CXXFLAGS = -I.. -g  -Wall -Wno-unused -O2 $(BLITZINC)
+
+GENTEST = prem-test contraction-test
 
 VOTEST = vo-energy-test vo-baseline-test 
 CDTEST = cd-density-test cd-baseline-test cd-energy-test
@@ -30,3 +31,6 @@ testdata: $(TESTEXECS) $(TESTFILES)
 
 clean:
 	rm -f *-test *.o *~
+
+contraction-test: contraction-test.cc
+	$(CXX) -o $@ $^ $(LIBS)

@@ -1,6 +1,6 @@
 /**
  *
- * $Id: NuEvolverVacuum.h,v 1.5 2002-12-04 22:00:44 bviren Exp $
+ * $Id: NuEvolverVacuum.h,v 1.6 2003-07-18 17:33:08 bviren Exp $
  *
  * \class NuEvolverVacuum
  *
@@ -46,8 +46,8 @@ protected:
     void calculate();
 
     // Get at the transform.  Remember blitz++'s asignment rules!
-    const ComplexMatrix get_transform() const;
     ComplexMatrix get_transform();
+//    ComplexMatrix get_transform() const;
 
 
 private:

@@ -22,6 +22,29 @@ OscParam::OscParam(double dm2_21, double dm2_31,
 OscParam::~OscParam()
 {
 }
+OscParam::OscParam(const OscParam& that)
+{
+    this->Copy(that);
+}
+OscParam& OscParam::operator=(const OscParam& rhs)
+{
+    if (&rhs == this) return *this;
+    this->Copy(rhs);
+    return *this;
+}
+
+void OscParam::Copy(const OscParam& other)
+{
+    this->m_dm2_21 = other.m_dm2_21;
+    this->m_dm2_31 = other.m_dm2_31;
+    this->m_theta_12 = other.m_theta_12;
+    this->m_theta_23 = other.m_theta_23;
+    this->m_theta_13 = other.m_theta_13;
+    this->m_delta_cp = other.m_delta_cp;
+    this->m_anti_multiplier = other.m_anti_multiplier;
+
+    m_dirty = true;
+}
 
 void OscParam::set_antineutrino()
 {

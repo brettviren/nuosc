@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////
 //
-// $Id: OdeFunc.h,v 1.4 2003-07-07 22:20:54 bviren Exp $
+// $Id: OdeFunc.h,v 1.5 2003-07-18 17:33:08 bviren Exp $
 //
 // OdeFunc
 //
@@ -68,7 +68,7 @@ public:
                         int nregions, ComplexVector y0);
 
     // Call before a Solve()
-    void ClearSteps() { m_steps.clear(); m_values.clear(); }
+    void ClearSteps();
     std::vector<double> GetSteps(void) { return m_steps; }
     std::vector<ComplexVector> GetStepValues(void) { return m_values; }
 

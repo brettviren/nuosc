@@ -36,8 +36,19 @@ double complex_magnitude(const complex<double>& c)
 ComplexMatrix matrix_product(const ComplexMatrix& m1, const ComplexMatrix& m2)
 {
     ComplexMatrix p(3,3);
+#if 0
     using namespace blitz::tensor; // i,j,k
     p = sum(m1(i,k)*m2(k,j),k);
+#else
+    for (int i=0; i<3; ++i) {
+        for (int j=0; j<3; ++j) {
+            p(i,j) = 0.0;
+            for (int k=0; k<3; ++k) {
+                p(i,j) += m1(i,k)*m2(k,j);
+            }
+        }
+    }
+#endif
     return p;
 }
 
