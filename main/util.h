@@ -19,5 +19,6 @@ std::vector<double> strings2doubles(const std::vector<std::string>& vs);
 */
 
 std::vector<double> desc2vector(std::string desc);
+std::vector<double> desc2vector(std::string desc, std::vector<double>& direct);
 
 #endif  // UTIL_H

@@ -1,6 +1,6 @@
 include config.mk
 
-CXXFLAGS =  -Wall -g  -Wno-unused $(BLITZINC) # -O2
+CXXFLAGS =  -Wall -g  -Wno-unused $(BLITZINC) -O2
 LIBS = $(BLITZLIB)
 
 SRCS = $(wildcard *.cc)

@@ -71,7 +71,7 @@ initial neutrino, the oscilation parameters (bunded in OscParam, see
 OscParam.h) as well as an energy and baseline.  Additionally, the
 "constant" functions take a "density".  
 
-Units are uniform throughout:
+The internal library units are uniform throughout:
 
 	[dm^2]		= eV^2
 	[angle]		= radians
