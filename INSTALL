@@ -1,0 +1,24 @@
+Pre-requirements:
+=================
+
+For the matrix calculations you will need a decent C++ compiler and
+blitz++ (Debian package or from http://oonumerics.org/blitz/)
+
+Installation:
+=============
+
+Edit config.mk file to suit your local system.
+
+Type:
+
+  make
+  make install
+
+This will install things based on the PREFIX variable.  
+
+To run the main program (genprob) you may need to add 
+
+  PREFIX/lib
+
+to your LD_LIBRARY_PATH
+

@@ -23,7 +23,7 @@ clean:
 	$(MAKE) -C main clean
 
 dist:
-	cd .. && tar -czf libnuosc++.tar.gz libnuosc++/{Makefile,*.{cc,h},{test,main}/{Makefile,*.{cc,h}}} > /dev/null 2>&1 || true
+	cd .. && tar -czf libnuosc++.tar.gz libnuosc++/{README,INSTALL,config.mk,Makefile,*.{cc,h},{test,main}/{Makefile,*.{cc,h}}} > /dev/null 2>&1 || true
 
 
 install: $(LIB) mains

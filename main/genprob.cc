@@ -3,6 +3,8 @@
 #include "fp.h"
 #include <string>
 #include <cstring>
+#include <fstream>
+#include <vector>
 
 using namespace std;
 
@@ -19,6 +21,8 @@ struct GenProbConfig {
 
     double density;             // <0 if doing PREM, 0 for vacuum
     int calculation;            // 1=matrix, 2=step
+
+    vector<double> denlu, poslu; // density/position lookup tables
 
     GenProbConfig() : nu0(3) {
         nu0 = 0.0;
@@ -59,7 +63,14 @@ static void dump_gpc()
              << gpc.estop << " += " << gpc.estep << endl;
     else
         cerr << "energy = " << gpc.energy << endl;
-    cerr << "density = " <<  gpc.density << endl;
+    int n = gpc.denlu.size();
+    if (n) {
+        cerr << "density lookup table = " << endl;
+        for (int i=0; i<n; ++i)
+            cerr << gpc.poslu[i] << " " << gpc.denlu[i] << endl;
+    }
+    else
+        cerr << "density = " <<  gpc.density << endl;
 }
 
 static void usage(const char* msg)
@@ -120,6 +131,26 @@ static int parse_calc(const char* calctype)
     usage ("Unknown calculation type");
     return 0;
 }
+static void fill_density_lookup(const char* filename)
+{
+    ifstream fstr(filename);
+
+    if (!fstr) {
+        string msg = "Failed to open lookup file ";
+        msg += filename;
+        usage (msg.c_str());
+        return;
+    }
+
+    double x;
+    while (fstr>>x) {
+        gpc.poslu.push_back(x*1.0e5);
+        fstr>>x;
+        gpc.denlu.push_back(x);
+    }
+}
+
+
 void parse_args(int argc, char* argv[])
 {
 
@@ -135,6 +166,7 @@ void parse_args(int argc, char* argv[])
         "d:delta <CP phase in deg> default = 0",
         "n:neutrino <nu number> nue=1,numu=2,nutau=3, anti *= -1",
         "D:density <constant density in g/cm^3> default = 0. <0 => PREM",
+        "L:lookup <density lookup file name - columns of pos & dens>",
         "c:calculation <calculation type> \"matrix\"(def), \"step\"",
         0
     };
@@ -210,6 +242,10 @@ void parse_args(int argc, char* argv[])
             if (!optarg) usage ("No density given with -D");
             gpc.density = atof(optarg);
             break;
+        case 'L':
+            if (!optarg) usage ("No density lookup filename given with -L");
+            fill_density_lookup(optarg);
+            break;
         case 'c':
             if (!optarg) usage ("No calculation type given with -c");
             gpc.calculation = parse_calc(optarg);
@@ -245,6 +281,9 @@ inline ComplexVector do_prem_step(double energy, double baseline)
 {return nuosc_prob_prem_step(gpc.nu0,gpc.op,energy,baseline);}
 inline ComplexVector do_prem_matrix(double energy, double baseline)
 {return nuosc_prob_prem_matrix(gpc.nu0,gpc.op,energy,baseline);}
+inline ComplexVector do_lookup_matrix(double energy, double baseline)
+{return nuosc_prob_lookup_matrix(gpc.nu0,gpc.op,energy,baseline,
+                                 gpc.poslu,gpc.denlu);}
 
 do_prob_f do_prob;
 
@@ -290,7 +329,12 @@ int main (int argc, char *argv[])
 
     parse_args(argc,argv);
 
-    if (gpc.density < -0.0001) {
+    if (gpc.denlu.size() > 0) {
+        do_prob = do_lookup_matrix;
+        do_energy(); // only support energy iter with LU for now
+        return 0;
+    }
+    else if (gpc.density < -0.0001) {
         if (gpc.calculation == 1)
             do_prob = do_prem_matrix;
         else

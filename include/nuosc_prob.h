@@ -1,6 +1,6 @@
 /**
  *
- * $Id: nuosc_prob.h,v 1.7 2003-07-07 22:20:54 bviren Exp $
+ * $Id: nuosc_prob.h,v 1.8 2004-04-25 14:43:32 bviren Exp $
  *
  * \class nuosc_prob
  *
@@ -68,5 +68,17 @@ ComplexVector nuosc_prob_prem_step(ComplexVector initial_neutrino,
                                    const OscParam& op,
                                    double energy, double baseline);
 
+// Jump the neutrino state through the earth in constant density
+// pieces determined by the given lookup tables.  "n" gives the lenght
+// of the lookup tables.  The pos is considered the center of a bin
+// extending from half way between the previous to half way between
+// the subsequent pos.  The begin (end) position is assumed to be at 0
+// (baseline).
+
+ComplexVector nuosc_prob_lookup_matrix(ComplexVector initial_neutrino,
+                                       const OscParam& op,
+                                       double energy, double baseline,
+                                       const std::vector<double>& poslu,
+                                       const std::vector<double>& denlu);
 
 #endif  // NUOSC_PROB_H
