@@ -3,16 +3,18 @@
 #include "nuosc_earth.h"
 #include "constants.h"
 
-NuEvolverConstant::NuEvolverConstant(bool anti_neutrino)
+NuEvolverConstant::NuEvolverConstant(double density, bool anti_neutrino)
     : NuEvolverVacuum()
     , m_antineutrino(anti_neutrino)
+    , m_density(density)
 {
     this->real_calculate();
 }
 NuEvolverConstant::NuEvolverConstant(OscParam op, double energy, double baseline,
-                                     bool anti_neutrino)
+                                     double density, bool anti_neutrino)
     : NuEvolverVacuum(op,energy,baseline)
     , m_antineutrino(anti_neutrino)
+    , m_density(density)
 {
     this->real_calculate();
 }
@@ -21,6 +23,16 @@ void NuEvolverConstant::assume_anti_neutrino(bool tf)
 {
     if (m_antineutrino == tf) return;
     m_antineutrino = tf;
+    this->calculate();
+}
+
+double NuEvolverConstant::get_density(void) const 
+{ 
+    return m_density; 
+}
+void NuEvolverConstant::set_density(double density) 
+{
+    m_density = density; 
     this->calculate();
 }
 
@@ -36,9 +48,10 @@ void NuEvolverConstant::calculate()
 
 void NuEvolverConstant::real_calculate()
 {
-    double density = this->get_density();
-    double matter = 7.6e-14 * density;
-    matter *= earth_electron_fraction_by_density(density);
-    if (m_antineutrino) matter *= -1.0;
-    this->NuEvolverVacuum::get_transform()(0,0) += -EYE*matter;
+    // A = sqrt(2) GF Ne [=7.6e-14*Y*rho eV when rho = g/cm^3]
+    double A = 7.6e-14*m_density*earth_electron_fraction_by_density(m_density);
+    // Convert from eV to 1/cm
+    A /= hbarc;
+    if (m_antineutrino) A *= -1.0;
+    this->NuEvolverVacuum::get_transform()(0,0) += -EYE*A;
 }

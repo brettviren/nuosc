@@ -39,6 +39,7 @@ NuEvolverVacuum::operator()(ComplexVector nu, double x) const
 
 void NuEvolverVacuum::calculate()
 {
+//    cerr << "NuEvolverVacuum::calculate()\n";
     const OscParam& op = this->get_oscparams();
 
     ComplexMatrix msqrd = mass_squared_matrix(op.get_dms21(),op.get_dms31());

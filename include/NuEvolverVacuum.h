@@ -1,6 +1,6 @@
 /**
  *
- * $Id: NuEvolverVacuum.h,v 1.3 2002-11-26 22:09:26 bviren Exp $
+ * $Id: NuEvolverVacuum.h,v 1.4 2002-12-03 20:54:44 bviren Exp $
  *
  * \class NuEvolverVacuum
  *
@@ -48,7 +48,6 @@ protected:
 
 private:
 
-    virtual void set_density(double density) {}
     ComplexMatrix m_transform;  // -i/(2E)/(hbar*c)*U*M^2*Udagger
 };
 

@@ -1,6 +1,6 @@
 /**
  *
- * $Id: NuEvolver.h,v 1.3 2002-11-26 22:09:26 bviren Exp $
+ * $Id: NuEvolver.h,v 1.4 2002-12-03 20:54:44 bviren Exp $
  *
  * \class NuEvolver
  *
@@ -42,10 +42,6 @@ public:
     const OscParam& get_oscparams() const;
     virtual void set_oscparams(const OscParam& op);
 
-    // Density.  Note: this can be changed by operator().
-    double get_density(void) const;
-    virtual void set_density(double density);
-
     // in eV
     double get_energy(void) const;
     virtual void set_energy(double energy_ev);
@@ -57,7 +53,7 @@ public:
 private:
 
     OscParam m_oscparam;
-    double m_energy, m_baseline, m_density;
+    double m_energy, m_baseline;
 
 };                              // end of class NuEvolver
 

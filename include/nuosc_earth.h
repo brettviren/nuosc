@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////
 //
-// $Id: nuosc_earth.h,v 1.2 2002-11-21 22:40:59 bviren Exp $
+// $Id: nuosc_earth.h,v 1.3 2002-12-03 20:54:44 bviren Exp $
 //
 // earth
 //
@@ -36,6 +36,9 @@ double earth_electron_fraction(double d, double D);
 // with radius.
 double earth_electron_fraction_by_density(double density);
 
+// Find the start and stop points to just avoid discontinuities in the
+// earths density profile for given secant D.  Returns the number of
+// segments (at most 15).
 int earth_get_slant_distances(double x0[], double xf[], double D);
 int earth_radius_number(double D);
 

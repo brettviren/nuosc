@@ -1,0 +1,105 @@
+ macro init [x]
+   opt nstat
+   set ysiz 30
+   zone 1 3
+   ve/del *
+   set mtyp 20
+   set mscf 0.5
+ return
+
+ macro density xmin=0 xmax=10 ymin=0 ymax=1 v=b
+   exec init
+   ve/read den,a,b,c,aa,bb,cc prob-density.vec
+   sigma dif=[v][v]-[v]
+   sigma rel=dif/[v]
+   sigma u=a+b+c
+   sigma uu=aa+bb+cc
+
+   null [xmin] [xmax] 0.9 1.1
+   set pmci 2
+   ve/pl uu%den ! s
+   set pmci 1 
+   ve/pl u%den ! s
+   atitle '(red) and matrix (black) unitarity vs density'
+   
+
+   null [xmin] [xmax] -.05 .05
+   set pmci 3
+   ve/pl dif%den ! s
+   set pmci 4
+   ve/pl rel%den ! s
+   atitle 'absolute (green) and relative (blue) err vs. density' ' ' 321
+
+   null [xmin] [xmax] [ymin] [ymax]
+   set pmci 1 
+   ve/pl [v]%den ! s
+   set pmci 2
+   ve/pl [v][v]%den ! s
+   atitle 'step (red) and matrix (black) prob vs. density' ' ' 321
+ return
+
+ macro energy xmin=0 xmax=10 ymin=0 ymax=1 v=b
+   exec init
+   ve/read e,a,b,c,aa,bb,cc prob-energy.vec
+   sigma gev=e/1e9
+   sigma dif=[v][v]-[v]
+   sigma rel=dif/[v]
+   sigma u=a+b+c
+   sigma uu=aa+bb+cc
+
+   null [xmin] [xmax] 0.995 1.005
+   set pmci 2
+   ve/pl uu%gev ! s
+   set pmci 1 
+   ve/pl u%gev ! s
+   atitle '(red) and matrix (black) unitarity vs energy'
+   
+
+   null [xmin] [xmax] -.05 .05
+   set pmci 3
+   ve/pl dif%gev ! s
+   set pmci 4
+   ve/pl rel%gev ! s
+   atitle 'absolute (green) and relative (blue) err vs. energy' ' ' 321
+
+   null [xmin] [xmax] [ymin] [ymax]
+   set pmci 1 
+   ve/pl [v]%gev ! s
+   set pmci 2
+   ve/pl [v][v]%gev ! s
+   atitle 'step (red) and matrix (black) prob vs. energy' ' ' 321
+ return
+
+  macro baseline xmin=0 xmax=2540 ymin=0 ymax=1 v=b
+   exec init
+   ve/read cm,a,b,c,aa,bb,cc prob-baseline.vec
+   sigma km=cm/1e5;
+   sigma dif=[v][v]-[v]
+   sigma rel=dif/[v]
+   sigma u=a+b+c
+   sigma uu=aa+bb+cc
+
+   set mtyp 20
+   set mscf 0.5
+
+   null [xmin] [xmax] 0.995 1.005
+   set pmci 2
+   ve/pl uu%km ! s
+   set pmci 1 
+   ve/pl u%km ! s
+   atitle '(red) and matrix (black) unitarity vs energy'
+
+   null [xmin] [xmax] -.05 .05
+   set pmci 3
+   ve/pl dif%km ! s
+   set pmci 4
+   ve/pl rel%km ! s
+   atitle 'baseline (km)' 'absolute (green) and relitive (blue) err' ' ' 321
+
+   null [xmin] [xmax] [ymin] [ymax]
+   set pmci 1 
+   ve/pl [v]%km ! s
+   set pmci 2
+   ve/pl [v][v]%km ! s
+   atitle 'baseline (km)' 'step (red) and matrix (black) prob' ' ' 321
+ return

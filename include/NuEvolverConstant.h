@@ -1,6 +1,6 @@
 /**
  *
- * $Id: NuEvolverConstant.h,v 1.2 2002-11-26 22:09:26 bviren Exp $
+ * $Id: NuEvolverConstant.h,v 1.3 2002-12-03 20:54:44 bviren Exp $
  *
  * \class NuEvolverConstant
  *
@@ -30,17 +30,21 @@ class NuEvolverConstant : public NuEvolverVacuum
 
 public:
 
-    NuEvolverConstant(bool anti_neutrino = false);
+    NuEvolverConstant(double density=0, bool anti_neutrino = false);
     NuEvolverConstant(OscParam op, double energy=1.0e9, double baseline=1.0e5,
+                      double density = 0,
                       bool anti_neutrino = false);
 
     // This could be sussed from the neutrino passed into operator()()
     // but that would add to the calculation.  Just set it by hand!
     void assume_anti_neutrino(bool tf = false);
 
+    // Density.  Note: this can be changed by operator().
+    double get_density(void) const;
+    virtual void set_density(double density);
+
     // Rely on base class for:
     // virtual ComplexVector operator()(ComplexVector nu, double x) const;
-
 
 protected:
     // override vacuum calc to add our chunk.
@@ -50,6 +54,7 @@ private:
     // our chunk
     void real_calculate();
     bool m_antineutrino;
+    double m_density;
 };                              // end of class NuEvolverConstant
 
 #endif  // NUEVOLVERCONSTANT_H

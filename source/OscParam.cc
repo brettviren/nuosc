@@ -69,13 +69,13 @@ void OscParam::calculate() const
     m_mixing_matrix = mixing_matrix(m_theta_12,m_theta_23,m_theta_13,
                                     m_delta_cp);
     ComplexMatrix Udagger = hermitian_conjugate(m_mixing_matrix);
-    ComplexVector onezerozero(3);
-    onezerozero(0) = 1.0;
-    onezerozero(1) = 0.0;
-    onezerozero(2) = 0.0;
+    ComplexMatrix onezeros(3,3);
+    onezeros = 0.;
+    onezeros(0,0) = 1.0;
 
     using namespace blitz::tensor; // for i,j,k
-    m_matter_matrix = sum(Udagger(i,k)*onezerozero(k)*m_mixing_matrix(k,j),k);
+    m_matter_matrix = matrix_product(onezeros,m_mixing_matrix);
+    m_matter_matrix = matrix_product(Udagger,m_matter_matrix);
 
 //    cerr << "Udagger * diag(1,0,0) * U = " << m_matter_matrix << endl;
     m_matter_matrix(0,0) -= 1.0/3.0; 

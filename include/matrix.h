@@ -19,6 +19,8 @@ bool tridiag_solve(vector<double>& a, vector<double>& b, vector<double>& c,
 
 // Complex scalars
 complex<double> complex_conjugate(complex<double> c);
+double complex_magnitude_squared(complex<double> c);
+double complex_magnitude(complex<double> c);
 
 
 // Complex Vectors

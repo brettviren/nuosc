@@ -1,12 +1,14 @@
 CXX = g++
-LIBS = -L.. -lnuosc++ -lblitz -lm
+LIBS =  -lblitz -lm
 CXXFLAGS = -I.. -g  -Wall -Wno-unused
 
+# vo-energy-test vo-baseline-test vo-test 
+default: cd-density-test cd-baseline-test cd-energy-test
 
-%-test: %-test.o 
+%-test: %-test.o ../libnuosc++.so
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
 
-%-test.o: %-test.cc
+%-test.o: %-test.cc ../nuosc_prob.h
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 clean:

@@ -26,16 +26,6 @@ void NuEvolver::set_oscparams(const OscParam& op)
     m_oscparam = op; 
 }
 
-
-double NuEvolver::get_density(void) const 
-{ 
-    return m_density; 
-}
-void NuEvolver::set_density(double density) 
-{
-    m_density = density; 
-}
-
 double NuEvolver::get_energy(void) const 
 { 
     return m_energy; 

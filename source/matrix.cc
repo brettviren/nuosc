@@ -23,6 +23,15 @@ complex<double> complex_conjugate(complex<double> c)
 {
     return complex<double>(real(c),-imag(c));
 }
+double complex_magnitude_squared(complex<double> c)
+{
+    double r = real(c), i = imag(c);
+    return r*r+i*i;
+}
+double complex_magnitude(complex<double> c)
+{
+    return sqrt(complex_magnitude_squared(c));
+}
 
 ComplexMatrix matrix_product(ComplexMatrix m1, ComplexMatrix m2)
 {
