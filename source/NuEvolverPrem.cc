@@ -30,7 +30,7 @@ ComplexVector NuEvolverPrem::operator()(ComplexVector nu, double x) const
     ComplexVector ret(3);
     ret(0) = ret(1) = ret(2) = 0.0;
 
-#if 0
+#if 1
     blitz::firstIndex i;
     blitz::secondIndex j;
     ret = blitz::sum(m(i,j)*nu(j),j);

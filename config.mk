@@ -1,10 +1,12 @@
 # Hey, Emacs, this is a -*- makefile -*- .
 
 # point to where blitz++ is installed
-BLITZ = $(HOME)/lib/blitz-0.6-gcc-2.95
+#BLITZ = $(HOME)/lib/blitz-0.6-gcc-2.95
+BLITZ = /usr
 
 # Set if for non-system/non-default compiler
-CXX = g++-2.95
+#CXX = g++-2.95
+CXX = g++
 
 # Where to install: PREFIX/{lib,bin,include}
 PREFIX = $(HOME)

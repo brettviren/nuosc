@@ -44,7 +44,7 @@ NuEvolverVacuum::operator()(ComplexVector nu, double x) const
     ComplexVector ret(3);
     ret(0) = ret(1) = ret(2) = 0.0;
 
-#if 0
+#if 1
     using namespace blitz::tensor; // for i,j
     ret = sum(m_transform(i,j)*nu(j),j);
 #else
