@@ -7,9 +7,9 @@
    set mscf 0.5
  return
 
- macro density xmin=0 xmax=10 ymin=0 ymax=1 v=b
+ macro density xmin=0 xmax=10 ymin=0 ymax=1 v=b pre=""
    exec init
-   ve/read den,a,b,c,aa,bb,cc prob-density.vec
+   ve/read den,a,b,c,aa,bb,cc [pre]density-test.vec
    sigma dif=[v][v]-[v]
    sigma rel=dif/[v]
    sigma u=a+b+c
@@ -38,9 +38,9 @@
    atitle 'step (red) and matrix (black) prob vs. density' ' ' 321
  return
 
- macro energy xmin=0 xmax=10 ymin=0 ymax=1 v=b
+ macro energy xmin=0 xmax=10 ymin=0 ymax=1 v=b pre=""
    exec init
-   ve/read e,a,b,c,aa,bb,cc prob-energy.vec
+   ve/read e,a,b,c,aa,bb,cc [pre]energy-test.vec
    sigma gev=e/1e9
    sigma dif=[v][v]-[v]
    sigma rel=dif/[v]
@@ -49,30 +49,36 @@
 
    null [xmin] [xmax] 0.995 1.005
    set pmci 2
+   set mscf 1.0
    ve/pl uu%gev ! s
    set pmci 1 
+   set mscf 0.5
    ve/pl u%gev ! s
    atitle '(red) and matrix (black) unitarity vs energy'
    
 
    null [xmin] [xmax] -.05 .05
    set pmci 3
+   set mscf 1.0
    ve/pl dif%gev ! s
    set pmci 4
+   set mscf 0.5
    ve/pl rel%gev ! s
    atitle 'absolute (green) and relative (blue) err vs. energy' ' ' 321
 
    null [xmin] [xmax] [ymin] [ymax]
    set pmci 1 
+   set mscf 1.0
    ve/pl [v]%gev ! s
    set pmci 2
+   set mscf 0.5
    ve/pl [v][v]%gev ! s
    atitle 'step (red) and matrix (black) prob vs. energy' ' ' 321
  return
 
-  macro baseline xmin=0 xmax=2540 ymin=0 ymax=1 v=b
+  macro baseline xmin=0 xmax=2540 ymin=0 ymax=1 v=b pre=""
    exec init
-   ve/read cm,a,b,c,aa,bb,cc prob-baseline.vec
+   ve/read cm,a,b,c,aa,bb,cc [pre]baseline-test.vec
    sigma km=cm/1e5;
    sigma dif=[v][v]-[v]
    sigma rel=dif/[v]
@@ -80,26 +86,80 @@
    sigma uu=aa+bb+cc
 
    set mtyp 20
-   set mscf 0.5
 
    null [xmin] [xmax] 0.995 1.005
    set pmci 2
+   set mscf 1.0
    ve/pl uu%km ! s
    set pmci 1 
+   set mscf 0.5
    ve/pl u%km ! s
-   atitle '(red) and matrix (black) unitarity vs energy'
+   atitle '(red) and matrix (black) unitarity vs baseline'
 
    null [xmin] [xmax] -.05 .05
    set pmci 3
+   set mscf 1.0
    ve/pl dif%km ! s
    set pmci 4
+   set mscf 0.5
    ve/pl rel%km ! s
-   atitle 'baseline (km)' 'absolute (green) and relitive (blue) err' ' ' 321
+   atitle 'absolute (green) and relative (blue) err vs baseline' ' ' ' ' 321
 
    null [xmin] [xmax] [ymin] [ymax]
    set pmci 1 
+   set mscf 1.0
    ve/pl [v]%km ! s
    set pmci 2
+   set mscf 0.5
    ve/pl [v][v]%km ! s
-   atitle 'baseline (km)' 'step (red) and matrix (black) prob' ' ' 321
+   atitle 'step (red) and matrix (black) prob vs baseline' ' ' 321
  return
+
+ macro prem xmin=0 xmax=6500 ymin=2 ymax=15
+   opt nstat
+   set ysiz 30
+   zone
+   ve/del *
+   set mtyp 20
+   set mscf 0.5
+   ve/read rcm,rrel,den prem.vec
+   sigma rkm=rcm/1e5
+   sigma dep=1-rrel
+   
+   set pmci 1 
+
+   null [xmin] [xmax] [ymin] [ymax]
+   ve/pl den%rkm ! s
+   atitle 'Density vs. radius' '' '' 321
+
+ return
+ 
+ macro all nu=b
+   title 'Vacuum Oscillations'
+   exec baseline ! ! ! ! [nu] vo-
+   title 'Constant Density Oscillations'
+   exec baseline ! ! ! ! [nu] cd-
+   title 'Earth Density Oscillations'
+   exec baseline ! ! ! ! [nu] em-
+
+   title 'Vacuum Oscillations'
+   exec energy   ! ! ! ! [nu] vo-
+   
+   title 'Constant Density Oscillations'
+   exec energy   ! ! ! ! [nu] cd-
+   
+   title 'Earth Density Oscillations'
+   exec energy   ! ! ! ! [nu] em-
+   
+   title ''
+ return
+ 
+ macro printall
+   fort/file 69 plot.ps
+   meta 69 -324
+   exec plot#all a
+   exec plot#all b
+   exec plot#all c
+   close 69
+ return
+ 

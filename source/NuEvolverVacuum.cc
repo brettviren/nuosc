@@ -27,6 +27,15 @@ void NuEvolverVacuum::set_energy(double energy)
     this->calculate();
 }
 
+const ComplexMatrix NuEvolverVacuum::get_transform() const
+{
+    return m_transform; 
+}
+ComplexMatrix NuEvolverVacuum::get_transform()
+{
+    return m_transform; 
+}
+
 ComplexVector
 NuEvolverVacuum::operator()(ComplexVector nu, double x) const 
 {

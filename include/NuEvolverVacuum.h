@@ -1,6 +1,6 @@
 /**
  *
- * $Id: NuEvolverVacuum.h,v 1.4 2002-12-03 20:54:44 bviren Exp $
+ * $Id: NuEvolverVacuum.h,v 1.5 2002-12-04 22:00:44 bviren Exp $
  *
  * \class NuEvolverVacuum
  *
@@ -44,7 +44,11 @@ protected:
     // protected so the constant, non-zero matter density class can
     // get at it.
     void calculate();
-    ComplexMatrix& get_transform() { return m_transform; }
+
+    // Get at the transform.  Remember blitz++'s asignment rules!
+    const ComplexMatrix get_transform() const;
+    ComplexMatrix get_transform();
+
 
 private:
 

@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////
 //
-// $Id: nuosc_earth.h,v 1.3 2002-12-03 20:54:44 bviren Exp $
+// $Id: nuosc_earth.h,v 1.4 2002-12-04 22:00:44 bviren Exp $
 //
 // earth
 //
@@ -17,6 +17,14 @@
 
 #ifndef EARTH_H
 #define EARTH_H
+
+// The max number of regions before going 1/2 the track (8)
+extern const int earth_max_radius_number;
+// The maximum number of density regions that a neutrino could
+// traverse (2*8-1);
+extern const int earth_max_regions;
+// Nominal radius of the earth in cm
+extern const double Rearth;
 
 // Convert a distance (d) along a baseline (D) into earth radius.
 double earth_dist_to_radius(double d, double D);
@@ -35,6 +43,14 @@ double earth_electron_fraction(double d, double D);
 // optimization of above.  Makes use of monotonic decrease of density
 // with radius.
 double earth_electron_fraction_by_density(double density);
+
+// Return the average density along baseline D between points x0 and
+// xf.  This assumes that the density is linear between its values at
+// these two points.  It also assumes x0 and xf are the begin and
+// ending of a region (ie as returned from next function below).
+// However, it will work in the case that x0 and xf spans less than a
+// region as long as any central region is spanned symmetrically.
+double earth_average_region_density(double x0, double xf, double D);
 
 // Find the start and stop points to just avoid discontinuities in the
 // earths density profile for given secant D.  Returns the number of

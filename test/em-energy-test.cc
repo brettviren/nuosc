@@ -1,3 +1,5 @@
+// test Earth-Matter calculations
+
 #include "nuosc_prob.h"
 
 static ComplexVector normalize(ComplexVector v)
@@ -39,7 +41,6 @@ int main (int argc, char *argv[])
     nu0(1) = 1.0;
     nu0(2) = 0.0;
 
-    double density = 3.0;
     double baseline = 2540e5;
     double energy = 1e9;
     double maxen = 10e9;
@@ -47,11 +48,9 @@ int main (int argc, char *argv[])
     double start = 100e6;
     for (energy = maxen; energy>=start; energy -= step) {
         ComplexVector amp1 = 
-            nuosc_prob_matter_constant_matrix(nu0,op,energy,
-                                              baseline,density);
+            nuosc_prob_matter_earth_matrix_piecewise(nu0,op,energy,baseline);
         ComplexVector amp2 = 
-            nuosc_prob_matter_constant_step(nu0,op,energy,
-                                            baseline,density);
+            nuosc_prob_matter_earth_step(nu0,op,energy, baseline);
 
 //        amp1 = normalize(amp1);
 //        amp2 = normalize(amp2);

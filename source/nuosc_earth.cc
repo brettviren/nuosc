@@ -1,6 +1,11 @@
-#include <assert.h>
 #include "nuosc_earth.h"
+#include <assert.h>
+#include <cmath>
+#include <iostream>
+using namespace std;
 
+const int earth_max_radius_number = 8;
+const int earth_max_regions = 2*earth_max_radius_number-1;
 const double Rearth = 6371.0e5; // in cm
 
 // Some earth related functions.  In all, d=dist along base line,
@@ -99,13 +104,51 @@ int earth_radius_number(double D)
     return -1;
 }
 
+// Assumes x0 and xf are the begin and ending of a region.
+double earth_average_region_density(double x0, double xf, double D)
+{
+    const double epsilon = 1.0e-5;
+
+    double r0 = sqrt(Rearth*Rearth + x0*x0 - D*x0);
+    double rf = sqrt(Rearth*Rearth + xf*xf - D*xf);
+
+    // If the region is midway along the track just go half way.
+    if (fabs(r0-rf) < epsilon) {
+        xf = x0 + (xf-x0)/2;
+        rf = sqrt(Rearth*Rearth + xf*xf - D*xf);
+    }
+
+    // Assume linear density change.
+    double rho0 = earth_density_by_radius(r0);
+    double rhof = earth_density_by_radius(rf);
+
+    // linear coef.
+    double m = (rhof-rho0)/(rf-r0);
+    double b = rho0 -m*r0;
+
+    // integral(rho(x)dx,x0->xf)
+    double i = b*(xf-x0) + m*(0.25*( (2*xf-D)*rf - (2*x0-D)*r0 )
+                              + ((4*Rearth*Rearth-D*D)/8.
+                                 * log( (2*xf-D+2*rf)/(2*x0-D+2*r0) )));
+    cerr << "x0=" << x0
+         << " xf=" << xf
+         << " rho0=" << rho0
+         << " rhof=" << rhof
+         << " m=" << m
+         << " b=" << b
+         << " i=" << i
+         << endl;
+
+    return i/(xf-x0);
+}
+
 int earth_get_slant_distances(double x0[], double xf[], double D)
 {
     const double epsilon = 1.0e-5;
 
     int radius_number = earth_radius_number(D);
     if (radius_number < 0) return radius_number;
-    assert(radius_number < 8);
+    assert(radius_number < earth_max_radius_number);
 
     int ind=0;
     for (int n = 0; n < radius_number; ++n, ++ind) {

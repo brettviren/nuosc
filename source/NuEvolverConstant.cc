@@ -53,5 +53,8 @@ void NuEvolverConstant::real_calculate()
     // Convert from eV to 1/cm
     A /= hbarc;
     if (m_antineutrino) A *= -1.0;
-    this->NuEvolverVacuum::get_transform()(0,0) += -EYE*A;
+
+    // Get reference to transform matrix.
+    ComplexMatrix m = this->NuEvolverVacuum::get_transform();
+    m(0,0) += -EYE*A;
 }

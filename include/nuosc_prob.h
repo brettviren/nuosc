@@ -1,6 +1,6 @@
 /**
  *
- * $Id: nuosc_prob.h,v 1.3 2002-12-03 20:54:44 bviren Exp $
+ * $Id: nuosc_prob.h,v 1.4 2002-12-04 22:00:44 bviren Exp $
  *
  * \class nuosc_prob
  *
@@ -55,5 +55,18 @@ ComplexMatrix constant_density_mass_evolution_matrix(const OscParam& op,
                                                      double energy,
                                                      double distance,
                                                      double density);
+
+// Jump the neutrino state through the earth in pieces assuming
+// average density across jumps.  Each jump takes the neutrino across
+// a region of continuous earth density profile.
+ComplexVector nuosc_prob_matter_earth_matrix_piecewise(ComplexVector initial_neutrino,
+                                                       const OscParam& op,
+                                                       double energy, double baseline);
+
+// Full PREM matter density profile
+ComplexVector nuosc_prob_matter_earth_step(ComplexVector initial_neutrino,
+                                           const OscParam& op,
+                                           double energy, double baseline);
+
 
 #endif  // NUOSC_PROB_H

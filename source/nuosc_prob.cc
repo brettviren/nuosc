@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "NuEvolverVacuum.h"
 #include "NuEvolverConstant.h"
+#include "NuEvolverPrem.h"
 #include <cmath>                // for M_PI
 
 vector<double> nuosc_amplitude_to_prob(ComplexVector amp)
@@ -228,20 +229,40 @@ ComplexVector nuosc_prob_matter_constant_step(ComplexVector initial_neutrino,
     return nev.Solve(0,baseline,1e-7*length,initial_neutrino);
 }
 
+// Jump the neutrino state through the earth in pieces assuming
+// average density across jumps.  Each jump takes the neutrino across
+// a region of continuous earth density profile.
 ComplexVector nuosc_prob_matter_earth_matrix_piecewise(ComplexVector initial_neutrino,
                                                        const OscParam& op,
                                                        double energy, double baseline)
 {
-    
+    double x0[earth_max_regions], xf[earth_max_regions];
 
+    int n = earth_get_slant_distances(x0,xf,baseline);
 
-    ComplexMatrix Uf = constant_density_evolution_matrix(op,energy,
-                                                         baseline,density);
     ComplexVector vec(3);
+    vec = initial_neutrino;
+    for (int i=0; i < n; ++i) {
+        double density = earth_average_region_density(x0[i],xf[i],baseline);
+        cerr << "density = " << density << endl;
 
-    // (Uf)(nu0)
-
-    using namespace blitz::tensor; // for i,j.
-    vec = sum(Uf(i,j)*initial_neutrino(j),j);
+        vec = nuosc_prob_matter_constant_matrix(vec,op,energy,xf[i]-x0[i],density);
+    }
+    cerr << "nu=" << vec << endl;
     return vec;
+}
+
+// Full detailed matter density profile, stepped
+ComplexVector nuosc_prob_matter_earth_step(ComplexVector initial_neutrino,
+                                           const OscParam& op,
+                                           double energy, double baseline)
+{
+    double oscilation_length = M_PI*8.0*energy*hbarc/op.get_dms31();
+    double prec = 1.0e-13*baseline/oscilation_length;
+    double length = oscilation_length < baseline ? oscilation_length : baseline;
+
+    cerr << oscilation_length << "cm,  prec = " << prec << endl;
+    NuEvolverPrem nev(op,energy,baseline);
+    nev.SetPrecision(prec);
+    return nev.Solve(0,baseline,1e-7*length,initial_neutrino);
 }

@@ -5,8 +5,14 @@ using namespace blitz;
 
 
 
-OdeFunc::OdeFunc(){ this->SetStepper(); }
-OdeFunc::~OdeFunc(){}
+OdeFunc::OdeFunc()
+    : m_save_steps(true)
+{
+    this->SetStepper(); 
+}
+OdeFunc::~OdeFunc()
+{
+}
 
 void OdeFunc::SetStepper(OdeFunc::StepperType st)
 {
@@ -33,8 +39,10 @@ ComplexVector OdeFunc::Step(double x, double& step_size,
 }
 
 
+// Save the value y at the position x
 void OdeFunc::SaveStep(ComplexVector y, double x)
 {
+    if (! m_save_steps) return;
     m_steps.push_back(x);
     ComplexVector save(3);
     save = y;           // make sure we copy.  CV v1 = v2 is a ref
@@ -50,6 +58,9 @@ ComplexVector OdeFunc::Solve(double x0, double xf, double step_size,
     ComplexVector y(3);
     y = y0;
     double x;
+
+    this->condition_step_size(x0,step_size,1.1,y0,m_prec);
+
     double requested_step_size=step_size;
     for (x = x0; x+step_size< xf; x += step_size) {
         requested_step_size = step_size;
@@ -138,6 +149,24 @@ ComplexVector OdeFunc::runge_kutta_4th_stepper(double x, double& step_size,
     return ret;
 }
 
+void OdeFunc::condition_step_size(double x, double& h, double mult_tol,
+                                  ComplexVector y, double prec)
+{
+    double step = h;
+    double mult = 1;
+    cerr << "conditioning:";
+    m_save_steps = false;
+    do {
+        double requested_step = step;
+        this->runge_kutta_adaptive_stepper(x,step,y,prec);
+        mult = step/requested_step;
+    } while (mult > mult_tol);
+    cerr << "done\n";
+
+    h = step;
+    m_save_steps = true;
+}
+
 ComplexVector OdeFunc::runge_kutta_adaptive_stepper(double x, double& h,
                                                     ComplexVector y, double prec)
 {
@@ -194,18 +223,9 @@ ComplexVector OdeFunc::runge_kutta_adaptive_stepper(double x, double& h,
 
     if (ratio > 1) {
         // accept and try next step at a further distance
-//        cerr << "+ " << h;
-//        double mult = S*pow(ratio,0.01);
         double mult = S*pow(ratio,0.10);
-
-        if (mult > 1.00001)  {
-//            cerr << "Conditioning: h=" << h << " mult=" << mult << endl;
-            cerr << ".";
-            h *= mult;
-            return this->runge_kutta_adaptive_stepper(x, h, y, prec);
-        }
-
 //        double mult = S*pow(ratio,0.20);
+
         cerr << "+";
 #if 0
         cerr << h
@@ -221,16 +241,17 @@ ComplexVector OdeFunc::runge_kutta_adaptive_stepper(double x, double& h,
         return y5;
     }
 
-//    cerr << " at " << x << ", decrease step from " << h;
-//    h = S*h*pow(ratio,0.0125);
-    h = S*h*pow(ratio,0.125);
-//    h = S*h*pow(ratio,0.25);
-//    cerr << " to " << h << endl;
-//    cerr <<  "- " << h
-//         << " r= " << ratio 
-//         << " = " << prc << " / " << err
-//         << " at " << x 
-//         << endl;
-    cerr << "\n-\a\n";
+    double mult = S*pow(ratio,0.125);
+//    double mult = S*pow(ratio,0.25);
+    cerr << "-";
+#if 0
+    cerr << h
+         << " * " <<  mult
+         << " r= " << ratio 
+         << " = " << prc << " / " << err
+         << " at " << x
+         << endl;
+#endif
+    h *= mult;
     return this->runge_kutta_adaptive_stepper(x, h, y, prec);
 }

@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////
 //
-// $Id: OdeFunc.h,v 1.2 2002-12-02 16:14:18 bviren Exp $
+// $Id: OdeFunc.h,v 1.3 2002-12-04 22:00:44 bviren Exp $
 //
 // OdeFunc
 //
@@ -109,8 +109,13 @@ private:
     OdeStepper m_stepper;
     double m_prec;
 
+    void condition_step_size(double x, double& h, double step_tol,
+                             ComplexVector y, double prec);
+
+
     vector<double> m_steps;
     vector<ComplexVector> m_values;
+    bool m_save_steps;
 };
 
 #endif  // ODE_H

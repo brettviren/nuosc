@@ -1,5 +1,6 @@
 #include "nuosc_prob.h"
-#include "NuEvolverConstant.h"
+#include "nuosc_earth.h"
+#include "NuEvolverPrem.h"
 #include "constants.h"
 
 int main (int argc, char *argv[])
@@ -27,30 +28,53 @@ int main (int argc, char *argv[])
 
 
     double oscilation_length = 3.14159*8.0*energy*hbarc/op.get_dms31();
-    double prec = 1.0e-6*baseline/oscilation_length;
-    double length = oscilation_length < baseline ? oscilation_length : baseline;
-    NuEvolverConstant nev(op,energy,baseline,density);
+    double prec = 1.0e-13*baseline/oscilation_length;
+
+    NuEvolverPrem nev(op,energy,baseline);
     nev.SetPrecision(prec);
-    nev.Solve(0,baseline,1e-7*length,nu0);
-//    nev.Solve(0,baseline,926772,nu0); // for 1e-10
-//    nev.Solve(0,baseline,5.80592e+06,nu0); // for 1e-6
+
+    double x0[earth_max_regions], xf[earth_max_regions];
+    int n = earth_get_slant_distances(x0,xf,baseline);
+    
+    double *length = new double[n]; // leak
+    for (int ind=0; ind<n; ++ind) {
+        double dx = (xf[ind]-x0[ind]);
+        length[ind] = oscilation_length < dx ? oscilation_length : dx;
+        cerr << ind << " "
+             << x0[ind] << " -- " << xf[ind] << " is " << length[ind] << endl;
+        length[ind] *= 1e-7;
+    }
+
+    nev.Solve(x0,xf,length,n,nu0);
     vector<double> steps = nev.GetSteps();
     vector<ComplexVector> values = nev.GetStepValues();
 
     int siz = steps.size();
+    double x = 0;
     for (int ind = 0; ind < siz; ++ind) {
+        double pos = steps[ind];
+        double dx = pos-x;
+        double density = earth_density(x,baseline);
+
+        cerr << "x=" << x 
+             << " steps[" << ind << "]=" << steps[ind]
+             << " dx=" << dx
+             << " density=" << density << endl;
+
         // Direct matrix method
-        ComplexVector mamp = nuosc_prob_matter_constant_matrix(nu0,op,energy,steps[ind],density);
-        vector<double> pm = nuosc_amplitude_to_prob(mamp);
+        amp2 = nuosc_prob_matter_constant_matrix(amp2,op,energy,dx,density);
+        vector<double> pm = nuosc_amplitude_to_prob(amp2);
+
         // Stepping method
         ComplexVector samp = values[ind];
         vector<double> ps = nuosc_amplitude_to_prob(samp);
 
-        cout << steps[ind]
+        cout << x
              << " " << pm[0] << " " << pm[1] << " " << pm[2] << " "
 //             << " " << p2[0] << " " << p2[1] << " " << p2[2] << " "
              << " " << ps[0] << " " << ps[1] << " " << ps[2] << " "
              << endl;
+        x = pos;
     }
 
     return 0;
