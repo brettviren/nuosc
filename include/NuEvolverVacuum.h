@@ -1,6 +1,6 @@
 /**
  *
- * $Id: NuEvolverVacuum.h,v 1.1 2002-11-21 22:40:58 bviren Exp $
+ * $Id: NuEvolverVacuum.h,v 1.2 2002-11-23 22:23:06 bviren Exp $
  *
  * \class NuEvolverVacuum
  *
@@ -35,7 +35,7 @@ public:
     virtual void set_energy(double energy);
 
     /// What we are here for
-    virtual ComplexColumnVector operator()(const ComplexColumnVector& nu, double x) const;
+    virtual ComplexVector operator()(const ComplexVector& nu, double x) const;
 
 
 protected: 
@@ -49,8 +49,7 @@ protected:
 private:
 
     virtual void set_density(double density) {}
-    ComplexMatrix m_transform;
-    
-};                              // end of class NuEvolverVacuum
+    ComplexMatrix m_transform;  // -i/(2E)/(hbar*c)*U*M^2*Udagger
+};
 
 #endif  // NUEVOLVERVACUUM_H

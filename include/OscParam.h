@@ -1,6 +1,6 @@
 /**
  *
- * $Id: OscParam.h,v 1.3 2002-11-21 22:40:58 bviren Exp $
+ * $Id: OscParam.h,v 1.4 2002-11-23 22:23:06 bviren Exp $
  *
  * \class OscParam
  *
@@ -49,7 +49,7 @@
 #ifndef OSCPARAM_H
 #define OSCPARAM_H
 
-#include "nuosc_octave.h"
+#include "matrix.h"
 
 class OscParam
 {
@@ -96,5 +96,6 @@ private:
     mutable ComplexMatrix m_mixing_matrix;
     
 };                              // end of class OscParam
+
 
 #endif  // OSCPARAM_H

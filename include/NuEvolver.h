@@ -1,6 +1,6 @@
 /**
  *
- * $Id: NuEvolver.h,v 1.1 2002-11-21 22:40:58 bviren Exp $
+ * $Id: NuEvolver.h,v 1.2 2002-11-23 22:23:06 bviren Exp $
  *
  * \class NuEvolver
  *
@@ -35,7 +35,7 @@ public:
     virtual ~NuEvolver();
 
     /// Return the d(nu(x))/dx at the given x.
-    virtual ComplexColumnVector operator()(const ComplexColumnVector& nu, double x) const = 0;
+    virtual ComplexVector operator() (const ComplexVector& nu, double x) const = 0;
 
     /// Access the oscillation and other parameters.
     const OscParam& get_oscparams() const;

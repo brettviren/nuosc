@@ -1,6 +1,6 @@
 /**
  *
- * $Id: nuosc_octave.cc,v 1.2 2002-11-21 22:40:59 bviren Exp $
+ * $Id: nuosc_octave.cc,v 1.1 2002-11-23 22:23:06 bviren Exp $
  *
  * \class nuosc_octave
  *
@@ -79,13 +79,13 @@ DEFUN_DLD(nuosc_current_mixing_matrix,args,nargout, \
 //ComplexMatrix cp_phase_matrix(double cp_phase);
 DEFUN_DLD(nuosc_cp_phase_matrix,args,nargout,
           "-*- texinfo -*-\n\
-@deftypefn{Loadable Function} \n\
-&var{r} = nuosc_cp_phase_matrix(@var{angle})\n\
+@deftypefn{Loadable Function} {@var{r} =} nuosc_cp_phase_matrix(@var{angle})\n\
 \n\
 @cindex CP phase matrix\n\
 \n\
 Return the complex transformation matrix for the given CP phase angle.\n\
 Angle should be in radians\n\
+@end deftypefn\n\
 ")
 {
     double angle = args(0).double_value();
@@ -96,13 +96,13 @@ Angle should be in radians\n\
 // ComplexMatrix rotation_matrix(int i, int j, double angle);
 DEFUN_DLD(nuosc_rotation_matrix,args,nargout,
           "-*- texinfo -*-\n\
-@deftypefn{Loadable Function} \n\
-&var{r} = nuosc_rotation_matrix(@var{i},@var{j},@var{angle})\n\
+@deftypefn{Loadable Function} {@var{r} =} nuosc_rotation_matrix(@var{i},@var{j},@var{angle})\n\
 \n\
 @cindex Rotation matrix\n\
 \n\
 Return the transformation matrix for a rotation of the given angle in\n\
 the i-j plane.  i and j are 1,2,3 and angle should be in radians.\n\
+@end deftypefn\n\
 ")
 {
     int i = args(0).int_value();
@@ -117,14 +117,14 @@ the i-j plane.  i and j are 1,2,3 and angle should be in radians.\n\
 //                             double theta13,double cp_phase);
 DEFUN_DLD(nuosc_mixing_matrix,args,nargout,
           "-*- texinfo -*-\n\
-@deftypefn{Loadable Function} \n\
-&var{r} = nuosc_mixing_matrix(@var{theta12},@var{theta23},@var{theta13},@var{cp_phase})\n\
+@deftypefn{Loadable Function} {@var{r} =} nuosc_mixing_matrix(@var{theta12},@var{theta23},@var{theta13},@var{cp_phase})\n\
 \n\
 @cindex Neutrino mixing matrix\n\
 \n\
 Return the transformation matrix for three neutrino mixing with the\n\
 given angles, all in radians.  CP phase is optional and assumed zero if\n\
 not specified.\n\
+@end deftypefn\n\
 ")
 {
     int len = args.length();
@@ -142,12 +142,12 @@ not specified.\n\
 //ComplexMatrix mass_squared_matrix(double dm2_sol, double dm2_atm);
 DEFUN_DLD(nuosc_mass_squared_matrix,args,nargout,
           "-*- texinfo -*-\n\
-@deftypefn{Loadable Function} \n\
-&var{r} = nuosc_mass_squared_matrix(@var{dms21},@var{dms31})\n\
+@deftypefn{Loadable Function} {@var{r} =} nuosc_mass_squared_matrix(@var{dms21},@var{dms31})\n\
 \n\
 @cindex Neutrino mass matrix\n\
 \n\
 Return the mass squared matrix in the form diag(0,dms21,dms31)\n\
+@end deftypefn\n\
 ")
 {
     if (args.length() != 2) return octave_value();
@@ -161,14 +161,14 @@ Return the mass squared matrix in the form diag(0,dms21,dms31)\n\
 //                                          double energy, double distance);
 DEFUN_DLD(nuosc_mass_state_transport_matrix,args,nargout,
           "-*- texinfo -*-\n\
-@deftypefn{Loadable Function} \n\
-&var{r} = nuosc_mass_state_transport_matrix(@var{dms21},@var{dms31},@var{energy},@var{distance})\n\
+@deftypefn{Loadable Function} {@var{r} =} nuosc_mass_state_transport_matrix(@var{dms21},@var{dms31},@var{energy},@var{distance})\n\
 \n\
 @cindex Neutrino mass state transport matrix\n\
 \n\
 Return the space development of a mass eigenstate of given \n\
 energy (in eV) across given distance (in cm) assuming given \n\
 mass differences (in eV^2)\n\
+@end deftypefn\n\
 ")
 {
     if (args.length() != 4) return octave_value();
@@ -184,8 +184,7 @@ mass differences (in eV^2)\n\
 
 DEFUN_DLD(nuosc_set_evolver,args,,
           "-*- texinfo -*-\n\
-@deftypefn{Loadable Function} \n\
-&var{r} = nuosc_set_evolver(@var{evolver_name},@var{...})\n\
+@deftypefn{Loadable Function} {@var{r} =} nuosc_set_evolver(@var{evolver_name},@var{...})\n\
 \n\
 @cindex Set the evolver to use for the nuosc_evolve function\n\
 \n\
@@ -195,6 +194,7 @@ Choices are:\n\
         (\"vacuum\")\n\
  constant matter density (in g/cm3).  pass true for last if want anti-nu:\n\
         (\"constant\",density,[antinu=false])\n\
+@end deftypefn\n\
 ")
 {
     if (args.length() < 1) return octave_value();
@@ -215,15 +215,17 @@ Choices are:\n\
 }
 
 DEFUN_DLD(nuosc_evolve,args,nargout,
-          "-*- texinfo -*-\n\
-@deftypefn{Loadable Function} \n\
-&var{r} = nuosc_evolve(@var{neutrino-vector},@var{position})\n\
+ "-*- texinfo -*-\n\
+@deftypefn{Loadable Function} {@var{r} =} nuosc_evolve(@var{neutrino-vector},@var{position})\n\
 \n\
-@cindex Return the differential evolution of the given neutrino at the\n\
-given location\n
+@cindex ODE function for neutrino oscillations.\n\
+\n\
+Return the differential evolution of the given neutrino at the \n\
+given location.\n\
 \n\
 The neutrino should be expressed as a unit complex column 3-vector\n\
 The position is in cm along the baseline\n\
+@end deftypefn\n\
 ")
 {
     if (args.length() != 2) return ComplexColumnVector(3,Complex(0,0));

@@ -1,6 +1,7 @@
 #include "NuEvolverConstant.h"
 #include "nuosc_matrix.h"
 #include "nuosc_earth.h"
+#include "constants.h"
 
 NuEvolverConstant::NuEvolverConstant(bool anti_neutrino)
     : NuEvolverVacuum()
