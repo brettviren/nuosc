@@ -48,6 +48,12 @@ shell.  Second, when calculating the average the density as a function
 of radius is assumed to be linear.  
 
 
+Requirements:
+=============
+
+For the matrix calculations you will need a decent C++ compiler and
+blitz++ (Debian package or from http://oonumerics.org/blitz/)
+
 Implementation notes:
 ====================
 

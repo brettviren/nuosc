@@ -20,6 +20,10 @@ mains:
 clean:
 	rm -f *~ $(OBJS) $(LIB) $(LIBA) *.d *.da
 
+dist:
+	cd .. && tar -czf libnuosc++.tar.gz libnuosc++/{Makefile,*.{cc,h},{test,main}/{Makefile,*.{cc,h}}} > /dev/null 2>&1 || true
+
+
 
 $(LIB): $(OBJS)
 	$(CXX) -shared -o $@ $^
