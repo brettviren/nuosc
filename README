@@ -54,7 +54,25 @@ Implementation notes:
 The main interface are the functions in nuosc_prob.h.  There are 6
 probability calculators covering the 3 matter effect possibilities
 (vacuum, constant and PREM) times the 2 calculation methods (matrix
-and step).
+and step).  They are named like:
+
+	nuosc_prob_[matter-type]_[calculation-type]()
+
+With "matter-type" = "vacuum", "constant" or "prem" and
+"calculation-type" = "matrix" or "step".
+
+They take a ComplexVector (see matrix.h) holding the amplitude of the
+initial neutrino, the oscilation parameters (bunded in OscParam, see
+OscParam.h) as well as an energy and baseline.  Additionally, the
+"constant" functions take a "density".  
+
+Units are uniform throughout:
+
+	[dm^2]		= eV^2
+	[angle]		= radians
+	[length]	= cm
+	[energy]	= eV
+	[density]	= g/cm^3
 
 A note on anti-neutrinos: CP symetry is broken in that the matter
 potential and the CP phase changes sign between neutrino and
@@ -67,3 +85,49 @@ have this -1 applied if using anti neutrinos.  However, the angle
 returned via get_deltacp() will *NOT*.  When using these two matrices
 for the evolution equation solution, one does not need to worry about
 nu/antinu issues.  This is how nuosc_prob.cc functions behave.
+
+
+Command line interface.
+=======================
+
+There exists a command line program, "genprob" (in main/) which gives
+access to all these calculations.  Simply running it w/out any args
+will produce this help:
+
+usage: genprob [-e|--energy <energy> [GeV] default = 1 GeV]
+               [-b|--baseline <baseline> [km] default = 1 km]
+               [-E|--energy-range <Estart Estop Estep> [GeV] ...]
+               [-B|--baseline-range <Bstart Bstop Bstep> [km] ...]
+               [-t|--theta <theta_12 theta_23 theta_13> degrees ...]
+               [-S|--sin <sin^2(2theta_12) sin^2(2theta_23) sin^2(2theta_13)> ...]
+               [-s|--sol <dm2_sol = dm2_21 in eV^2> default = 5.0e-5 eV^2]
+               [-a|--atm <dm2_atm = dm2_31 in eV^2> default = 2.5e-3 eV^2]
+               [-d|--delta <CP phase in deg> default = 0]
+               [-n|--neutrino <nu number> nue=1,numu=2,nutau=3, anti *= -1]
+               [-D|--density <constant density in g/cm^3> default = 0. <0 => PREM]
+               [-c|--calculation <calculation type> "matrix"(def), "step"] 
+
+Note that the units are different ([angle]=degrees, [energy]=GeV,
+[distance]=km) than the underlying code uses and are given in the help
+message.
+
+The ouput is 
+
+	<energy> <baseline> <P(nux->nue)> <P(nux->numu)> <P(nux->nutau)>
+
+If one uses -e a single energy will be calculated and with -E, a range
+of energies will be calculated with one line of output per energy.
+Similarly a single baseline is specified with -b and a range with -B.
+
+Either mixing angles or the corresponding sin^2(2theta)'s can be
+specified.  Internally angles are used.  Default is SK atmospheric
+best fit point, LMA and CHOOZ limit at SK best fit point.
+
+The initial neutrino is specified as nue=1, numu=2 and nutau=3.  The
+same is used for anti-neutrino but with the sign inverted.
+
+The density (in g/cm^3) can be negative in order to use PREM, 0 for
+vacuum or positive for constant density.
+
+The calculation method (see above) can be either "matrix" or "step".
+
