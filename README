@@ -1,14 +1,60 @@
 
  libnuosc++ - A library for calculating 3 neutrino oscillation probabilities.
 
-"Step" methods solve the evolution ODE dnu/dx = (-i/(2E)UM^2Udagger +
-V)nu(x) by stepping the neutrino from start to finish using a variety
-of steppers.  The best and default is an adaptive step size
-Runge-Kutta 5th order stepper.  
+Introduction:
+=============
 
-"Matrix" method (where applicable) solve the ODE directly.  This is
-only possible with oscillations in vacuum and constant matter density.
+This library provides various methods to calculate 3 neutrino
+oscillation probabilities with and with out matter effects as well as
+the possibility for a nonzero Dirac CP phase.  Anti neutrinos are also
+handled.
 
+It does this by solving the evolution equation:
+
+	d(nu)/dx = [-i/(2E) U M^2 Udagger -iV] nu(x)
+
+where U is the (potentially complex) mixing matrix, M^2 is
+diag(0,dm^2_21,dm^2_31) and V = diag(A,0,0) is the matter effect term.
+In the case of anti neutrinos the sign of A and of the CP phase is
+inverted.
+
+There are three classes of calculations with regards to matter
+effects: vacuum oscillations in the absence of matter, oscillations
+through constant density matter and a spherically symmetric earth
+matter density profile from the Preliminary Reference Earth Model
+(PREM) (see hep-ph/0002149 and http://solid_earth.ou.edu/prem.html).
+
+For each of these three classes there are two methods of calculation.
+A direct matrix transform method and a stepped method.  The matrix
+transform involves analytically solving the evolution equation (see
+hep-ph/9910546).  This solution is exact for the case of constant
+density (and of course vacuum).
+
+The second method is to step the evolution equation down the neutrino
+baseline.  This is done with an 5th order adaptive Runge-Kutta
+stepper.  Stepping in inherently non-exact, but the precision can be
+controlled to arbitrary tightness at the cost of running time.  For
+the vacuum or constant density cases the matrix methods are obviously
+preferable.  In these cases, the step methods were developed for
+checking, debugging and building up to the last class of calculation.
+
+Since the earth density profile is not constant there is no analytical
+solution so one must resort to some kind of approximation or to suffer
+the running time needed for a full stepping of the evolution equation.
+The approximation available is on based on the PREM with simplifying
+assumptions.  First, it assumes each earth shell to have a constant
+density equal to the average over the neutrino track through that
+shell.  Second, when calculating the average the density as a function
+of radius is assumed to be linear.  
+
+
+Implementation notes:
+====================
+
+The main interface are the functions in nuosc_prob.h.  There are 6
+probability calculators covering the 3 matter effect possibilities
+(vacuum, constant and PREM) times the 2 calculation methods (matrix
+and step).
 
 A note on anti-neutrinos: CP symetry is broken in that the matter
 potential and the CP phase changes sign between neutrino and

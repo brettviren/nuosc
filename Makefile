@@ -1,5 +1,5 @@
 CXX = g++ # -pg  -fprofile-arcs 
-CXXFLAGS =  -Wall -g  -Wno-unused -O2
+CXXFLAGS =  -Wall -g  -Wno-unused # -O2
 BLITZLIB = -lblitz
 LIBS = $(BLITZLIB)
 

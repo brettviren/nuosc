@@ -50,8 +50,8 @@ int main (int argc, char *argv[])
         if (fabs(density) < 1.0e-10) density = 0.0;
         ComplexVector amp1 = nuosc_prob_vacuum_matrix(nu0,op,energy,baseline);
         ComplexVector amp2 = 
-            nuosc_prob_matter_constant_matrix(nu0,op,energy,
-                                              baseline,density);
+            nuosc_prob_constant_matrix(nu0,op,energy,
+                                       baseline,density);
 
 //        amp1 = normalize(amp1);
 //        amp2 = normalize(amp2);

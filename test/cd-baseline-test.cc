@@ -40,7 +40,7 @@ int main (int argc, char *argv[])
     int siz = steps.size();
     for (int ind = 0; ind < siz; ++ind) {
         // Direct matrix method
-        ComplexVector mamp = nuosc_prob_matter_constant_matrix(nu0,op,energy,steps[ind],density);
+        ComplexVector mamp = nuosc_prob_constant_matrix(nu0,op,energy,steps[ind],density);
         vector<double> pm = nuosc_amplitude_to_prob(mamp);
         // Stepping method
         ComplexVector samp = values[ind];

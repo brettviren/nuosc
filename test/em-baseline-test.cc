@@ -62,7 +62,7 @@ int main (int argc, char *argv[])
              << " density=" << density << endl;
 
         // Direct matrix method
-        amp2 = nuosc_prob_matter_constant_matrix(amp2,op,energy,dx,density);
+        amp2 = nuosc_prob_constant_matrix(amp2,op,energy,dx,density);
         vector<double> pm = nuosc_amplitude_to_prob(amp2);
 
         // Stepping method

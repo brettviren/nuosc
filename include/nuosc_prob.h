@@ -1,6 +1,6 @@
 /**
  *
- * $Id: nuosc_prob.h,v 1.5 2002-12-05 18:55:17 bviren Exp $
+ * $Id: nuosc_prob.h,v 1.6 2002-12-06 18:56:24 bviren Exp $
  *
  * \class nuosc_prob
  *
@@ -38,14 +38,14 @@ ComplexVector nuosc_prob_vacuum_step(ComplexVector initial_neutrino,
                                      const OscParam& op,
                                      double energy, double baseline);
 
-ComplexVector nuosc_prob_matter_constant_matrix(ComplexVector initial_neutrino,
-                                                const OscParam& op,
-                                                double energy, double baseline,
-                                                double density);
-ComplexVector nuosc_prob_matter_constant_step(ComplexVector initial_neutrino,
-                                              const OscParam& op,
-                                              double energy, double baseline,
-                                              double density);
+ComplexVector nuosc_prob_constant_matrix(ComplexVector initial_neutrino,
+                                         const OscParam& op,
+                                         double energy, double baseline,
+                                         double density);
+ComplexVector nuosc_prob_constant_step(ComplexVector initial_neutrino,
+                                       const OscParam& op,
+                                       double energy, double baseline,
+                                       double density);
 
 /// Return the matrix U_m [ie. nu_m(x) = U_m*nu_m(0)] which evolves a
 /// MASS eigenstate of given energy over given distance through matter
@@ -59,14 +59,14 @@ ComplexMatrix constant_density_evolution_matrix(const OscParam& op,
 // Jump the neutrino state through the earth in pieces assuming
 // average density across jumps.  Each jump takes the neutrino across
 // a region of continuous earth density profile.
-ComplexVector nuosc_prob_matter_earth_matrix_piecewise(ComplexVector initial_neutrino,
-                                                       const OscParam& op,
-                                                       double energy, double baseline);
+ComplexVector nuosc_prob_prem_matrix(ComplexVector initial_neutrino,
+                                     const OscParam& op,
+                                     double energy, double baseline);
 
 // Full PREM matter density profile
-ComplexVector nuosc_prob_matter_earth_step(ComplexVector initial_neutrino,
-                                           const OscParam& op,
-                                           double energy, double baseline);
+ComplexVector nuosc_prob_prem_step(ComplexVector initial_neutrino,
+                                   const OscParam& op,
+                                   double energy, double baseline);
 
 
 #endif  // NUOSC_PROB_H

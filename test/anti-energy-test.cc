@@ -53,11 +53,11 @@ int main (int argc, char *argv[])
     bool anti_neutrino = true;
     for (energy = maxen; energy>=start; energy -= step) {
         ComplexVector amp1 = 
-            nuosc_prob_matter_constant_matrix(nu0,op,energy,
-                                              baseline,density);
+            nuosc_prob_constant_matrix(nu0,op,energy,
+                                       baseline,density);
         ComplexVector amp2 = 
-            nuosc_prob_matter_constant_matrix(nu0,antiop,energy,
-                                              baseline,density);
+            nuosc_prob_constant_matrix(nu0,antiop,energy,
+                                       baseline,density);
 
 //        amp1 = normalize(amp1);
 //        amp2 = normalize(amp2);

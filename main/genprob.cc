@@ -235,13 +235,13 @@ inline ComplexVector do_vacuum_step(double energy, double baseline)
 inline ComplexVector do_vacuum_matrix(double energy, double baseline)
 {return nuosc_prob_vacuum_matrix(gpc.nu0,gpc.op,energy,baseline);}
 inline ComplexVector do_matter_step(double energy, double baseline)
-{return nuosc_prob_matter_constant_step(gpc.nu0,gpc.op,energy,baseline,gpc.density);}
+{return nuosc_prob_constant_step(gpc.nu0,gpc.op,energy,baseline,gpc.density);}
 inline ComplexVector do_matter_matrix(double energy, double baseline)
-{return nuosc_prob_matter_constant_matrix(gpc.nu0,gpc.op,energy,baseline,gpc.density);}
+{return nuosc_prob_constant_matrix(gpc.nu0,gpc.op,energy,baseline,gpc.density);}
 inline ComplexVector do_prem_step(double energy, double baseline)
-{return nuosc_prob_matter_earth_step(gpc.nu0,gpc.op,energy,baseline);}
+{return nuosc_prob_prem_step(gpc.nu0,gpc.op,energy,baseline);}
 inline ComplexVector do_prem_matrix(double energy, double baseline)
-{return nuosc_prob_matter_earth_matrix_piecewise(gpc.nu0,gpc.op,energy,baseline);}
+{return nuosc_prob_prem_matrix(gpc.nu0,gpc.op,energy,baseline);}
 
 do_prob_f do_prob;
 

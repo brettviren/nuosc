@@ -161,10 +161,10 @@ ComplexMatrix constant_density_evolution_matrix(const OscParam& op,
     return Uf;
 }
 
-ComplexVector nuosc_prob_matter_constant_matrix(ComplexVector initial_neutrino,
-                                                const OscParam& op,
-                                                double energy, double baseline,
-                                                double density)
+ComplexVector nuosc_prob_constant_matrix(ComplexVector initial_neutrino,
+                                         const OscParam& op,
+                                         double energy, double baseline,
+                                         double density)
 {
     ComplexMatrix Uf = 
         constant_density_evolution_matrix(op,energy,baseline,density);
@@ -177,10 +177,10 @@ ComplexVector nuosc_prob_matter_constant_matrix(ComplexVector initial_neutrino,
     return vec;
 }
 
-ComplexVector nuosc_prob_matter_constant_step(ComplexVector initial_neutrino,
-                                              const OscParam& op,
-                                              double energy, double baseline,
-                                              double density)
+ComplexVector nuosc_prob_constant_step(ComplexVector initial_neutrino,
+                                       const OscParam& op,
+                                       double energy, double baseline,
+                                       double density)
 {
     double oscilation_length = M_PI*8.0*energy*hbarc/op.get_dms31();
 
@@ -210,9 +210,9 @@ ComplexVector nuosc_prob_matter_constant_step(ComplexVector initial_neutrino,
 // Jump the neutrino state through the earth in pieces assuming
 // average density across jumps.  Each jump takes the neutrino across
 // a region of continuous earth density profile.
-ComplexVector nuosc_prob_matter_earth_matrix_piecewise(ComplexVector initial_neutrino,
-                                                       const OscParam& op,
-                                                       double energy, double baseline)
+ComplexVector nuosc_prob_prem_matrix(ComplexVector initial_neutrino,
+                                     const OscParam& op,
+                                     double energy, double baseline)
 {
     double x0[earth_max_regions], xf[earth_max_regions];
 
@@ -224,16 +224,16 @@ ComplexVector nuosc_prob_matter_earth_matrix_piecewise(ComplexVector initial_neu
         double density = earth_average_region_density(x0[i],xf[i],baseline);
 //        cerr << "density = " << density << endl;
 
-        vec = nuosc_prob_matter_constant_matrix(vec,op,energy,xf[i]-x0[i],density);
+        vec = nuosc_prob_constant_matrix(vec,op,energy,xf[i]-x0[i],density);
     }
 //    cerr << "nu=" << vec << endl;
     return vec;
 }
 
 // Full detailed matter density profile, stepped
-ComplexVector nuosc_prob_matter_earth_step(ComplexVector initial_neutrino,
-                                           const OscParam& op,
-                                           double energy, double baseline)
+ComplexVector nuosc_prob_prem_step(ComplexVector initial_neutrino,
+                                   const OscParam& op,
+                                   double energy, double baseline)
 {
     double oscilation_length = M_PI*8.0*energy*hbarc/op.get_dms31();
     double prec = 1.0e-13*baseline/oscilation_length;

@@ -48,9 +48,9 @@ int main (int argc, char *argv[])
     double start = 100e6;
     for (energy = maxen; energy>=start; energy -= step) {
         ComplexVector amp1 = 
-            nuosc_prob_matter_earth_matrix_piecewise(nu0,op,energy,baseline);
+            nuosc_prob_prem_matrix(nu0,op,energy,baseline);
         ComplexVector amp2 = 
-            nuosc_prob_matter_earth_step(nu0,op,energy, baseline);
+            nuosc_prob_prem_step(nu0,op,energy, baseline);
 
 //        amp1 = normalize(amp1);
 //        amp2 = normalize(amp2);

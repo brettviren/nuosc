@@ -8,7 +8,7 @@ VOTEST = vo-energy-test vo-baseline-test
 CDTEST = cd-density-test cd-baseline-test cd-energy-test
 EMTEST = em-energy-test em-baseline-test
 ANTITEST = anti-energy-test
-TESTEXECS = $(ANTITEST) # $(EMTEST) $(CDTEST) $(VOTEST)
+TESTEXECS = $(ANTITEST) $(EMTEST) $(CDTEST) $(VOTEST)
 
 default: $(TESTEXECS)
 
