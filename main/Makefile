@@ -12,5 +12,8 @@ genprob: genprob.o $(OBJS)
 %.o: %.cc
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
+install: $(MAINS)
+	cp $(MAINS) $(PREFIX)/bin
+
 clean:
 	rm -f $(MAINS) *.o *~

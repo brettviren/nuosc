@@ -50,7 +50,7 @@ ComplexVector nuosc_prob_vacuum_step(ComplexVector initial_neutrino,
                                      const OscParam& op,
                                      double energy, double baseline)
 {
-    double oscilation_length = M_PI*8.0*energy*hbarc/op.get_dms31();
+    double oscilation_length = fabs(M_PI*8.0*energy*hbarc/op.get_dms31());
 
     // Target precision.  
     //
@@ -182,7 +182,7 @@ ComplexVector nuosc_prob_constant_step(ComplexVector initial_neutrino,
                                        double energy, double baseline,
                                        double density)
 {
-    double oscilation_length = M_PI*8.0*energy*hbarc/op.get_dms31();
+    double oscilation_length = fabs(M_PI*8.0*energy*hbarc/op.get_dms31());
 
     // Target precision.  
     //
@@ -235,7 +235,7 @@ ComplexVector nuosc_prob_prem_step(ComplexVector initial_neutrino,
                                    const OscParam& op,
                                    double energy, double baseline)
 {
-    double oscilation_length = M_PI*8.0*energy*hbarc/op.get_dms31();
+    double oscilation_length = fabs(M_PI*8.0*energy*hbarc/op.get_dms31());
     double prec = 1.0e-13*baseline/oscilation_length;
     double length = oscilation_length < baseline ? oscilation_length : baseline;
 

@@ -1,7 +1,9 @@
 #include "nuosc_prob.h"
 #include "options.h"
+#include "fp.h"
 #include <string>
 #include <cstring>
+
 
 struct GenProbConfig {
     OscParam op;                // angles, masses, anti?
@@ -280,8 +282,11 @@ void do_single()
     output(gpc.energy,gpc.baseline,nu);
 }
 
+
 int main (int argc, char *argv[])
 {
+    FloatXImp trap_fpe(true);
+
     parse_args(argc,argv);
 
     if (gpc.density < -0.0001) {
