@@ -1,6 +1,6 @@
 /**
  *
- * $Id: OscParam.h,v 1.6 2002-11-26 22:09:26 bviren Exp $
+ * $Id: OscParam.h,v 1.7 2002-12-02 22:53:01 bviren Exp $
  *
  * \class OscParam
  *
@@ -74,7 +74,11 @@ public:
     double get_ss2t23() const;        // as sin^2(2theta)
     double get_ss2t13() const;        // as sin^2(2theta)
 
+    /// Returns "U" the vacuum mixing matrix for the given parameters
     ComplexMatrix get_mixing_matrix() const;
+
+    /// Returns (Udagger)(diag(1,0,0))(U) - 1/3*I
+    ComplexMatrix get_matter_matrix() const;
 
     void set_dms21(double ev2);
     void set_dms31(double ev2);
@@ -89,6 +93,11 @@ private:
     double m_theta_12, m_theta_23, m_theta_13;
     double m_delta_cp;
         
+    // Internal optimization - lazy calculation
+    void calculate() const;
+    mutable ComplexMatrix m_mixing_matrix, m_matter_matrix;
+    mutable bool m_dirty;
+
 };                              // end of class OscParam
 
 

@@ -50,6 +50,18 @@ double vector_magnitude(ComplexVector v)
     return real(sqrt(s));
 }
 
+complex<double> determinant(ComplexMatrix m)
+{
+    complex<double> det = 0;
+    det += m(0,0)*m(1,1)*m(2,2);
+    det += m(0,1)*m(1,2)*m(2,0);
+    det += m(0,2)*m(1,0)*m(2,1);
+    det -= m(0,1)*m(1,0)*m(2,2);
+    det -= m(0,2)*m(1,1)*m(2,0);
+    det -= m(0,0)*m(1,2)*m(2,1);
+    return det;
+}
+
 bool tridiag_solve(vector<double>& avec, 
                           vector<double>& bvec,
                           vector<double>& cvec,

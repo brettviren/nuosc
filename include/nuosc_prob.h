@@ -1,6 +1,6 @@
 /**
  *
- * $Id: nuosc_prob.h,v 1.1 2002-11-26 22:09:26 bviren Exp $
+ * $Id: nuosc_prob.h,v 1.2 2002-12-02 22:53:01 bviren Exp $
  *
  * \class nuosc_prob
  *
@@ -37,5 +37,19 @@ ComplexVector nuosc_prob_vacuum_matrix(ComplexVector initial_neutrino,
 ComplexVector nuosc_prob_vacuum_step(ComplexVector initial_neutrino,
                                      const OscParam& op,
                                      double energy, double baseline);
+
+ComplexVector nuosc_prob_matter_constant_matrix(ComplexVector initial_neutrino,
+                                                const OscParam& op,
+                                                double energy, double baseline,
+                                                double density);
+
+/// Return the matrix U_m [ie. nu_m(x) = U_m*nu_m(0)] which evolves a
+/// MASS eigenstate of given energy over given distance through matter
+/// of given density and with corresponding vacuum oscillation
+/// parameters.
+ComplexMatrix constant_density_mass_evolution_matrix(const OscParam& op,
+                                                     double energy,
+                                                     double distance,
+                                                     double density);
 
 #endif  // NUOSC_PROB_H

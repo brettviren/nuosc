@@ -84,4 +84,3 @@ ComplexMatrix mass_state_transport_matrix(double dm2sol, double dm2atm,
 
     return T;
 }
-

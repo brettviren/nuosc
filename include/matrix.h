@@ -33,5 +33,5 @@ ComplexMatrix complex_conjugate(ComplexMatrix m);
 ComplexMatrix matrix_product(ComplexMatrix m1, ComplexMatrix m2);
 /// M*t
 ComplexMatrix hermitian_conjugate(ComplexMatrix m); // dagger
-
+complex<double> determinant(ComplexMatrix m);
 #endif  // MATRIX_H
