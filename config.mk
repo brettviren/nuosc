@@ -6,7 +6,11 @@ BLITZ = /usr
 
 # Set if for non-system/non-default compiler
 #CXX = g++-2.95
-CXX = g++
+#CXX = g++
+CXX=ccache g++
+
+# what to use to link
+LD=g++
 
 # Where to install: PREFIX/{lib,bin,include}
 PREFIX = $(HOME)

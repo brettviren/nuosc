@@ -28,6 +28,15 @@ double earth_radius_to_dist_end(double r, double D)
     return 0.5*D + sqrt(r*r + 0.25*D*D - Rearth*Rearth);
 }
 
+double earth_zenith_to_baseline(double zrad, double depth)
+{
+    double r = Rearth-depth;
+    double rcos = r*cos(zrad); 
+    //return sqrt((Rearth - r)*(Rearth + r) + rcos*rcos) - rcos;
+    return sqrt(depth*(2.0*r+depth) + rcos*rcos) - rcos;
+}
+
+
 // Return Y_e, the electron fraction.  This is based on a crude
 // estimation using numbers from hep-ph/0002149.
 double earth_electron_fraction(double d, double D)

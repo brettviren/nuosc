@@ -10,7 +10,8 @@ MAINS = genprob
 default: $(MAINS)
 
 genprob: genprob.o $(OBJS) 
-	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
+
 %.o: %.cc
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 

@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////
 //
-// $Id: nuosc_earth.h,v 1.4 2002-12-04 22:00:44 bviren Exp $
+// $Id: nuosc_earth.h,v 1.5 2005-01-12 21:37:12 bviren Exp $
 //
 // earth
 //
@@ -31,6 +31,10 @@ double earth_dist_to_radius(double d, double D);
 // vice versa.
 double earth_radius_to_dist_start(double r, double D);
 double earth_radius_to_dist_end(double r, double D);
+
+// Return the baseline from the Earth's surface to a detector at given
+// depth coresponding to the given zenith angle in radians
+double earth_zenith_to_baseline(double zrad, double depth=0.0/*cm*/);
 
 // Return the earth density at a distance (d) along a baseline (D),
 // uses the above.
