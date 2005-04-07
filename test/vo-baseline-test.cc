@@ -1,7 +1,7 @@
 #include "nuosc_prob.h"
 #include "NuEvolverVacuum.h"
 #include "constants.h"
-
+using namespace std;
 int main (int argc, char *argv[])
 {
     OscParam op;                // defaults

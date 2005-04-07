@@ -3,13 +3,13 @@ include ../config.mk
 LIBS =  $(BLITZLIB) -lm 
 CXXFLAGS = -I.. -g  -Wall -Wno-unused -O2 $(BLITZINC)
 
-GENTEST = prem-test contraction-test
+GENTEST = prem-test contraction-test density-test
 
 VOTEST = vo-energy-test vo-baseline-test 
 CDTEST = cd-density-test cd-baseline-test cd-energy-test
 EMTEST = em-energy-test em-baseline-test
 ANTITEST = anti-energy-test
-TESTEXECS = $(ANTITEST) $(EMTEST) $(CDTEST) $(VOTEST)
+TESTEXECS = $(ANTITEST) $(EMTEST) $(CDTEST) $(VOTEST) $(GENTEST)
 
 default: $(TESTEXECS)
 

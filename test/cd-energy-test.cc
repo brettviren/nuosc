@@ -1,5 +1,5 @@
 #include "nuosc_prob.h"
-
+using namespace std;
 static ComplexVector normalize(ComplexVector v)
 {
     complex<double> mag = 0;

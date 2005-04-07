@@ -3,6 +3,8 @@
 #include "NuEvolverPrem.h"
 #include "constants.h"
 
+using namespace std;
+
 int main (int argc, char *argv[])
 {
     OscParam op;                // defaults
@@ -21,9 +23,11 @@ int main (int argc, char *argv[])
     double density = 3.0;
     double energy = 1.e9;
 
-    double baseline = 2540e5;
+    //double baseline = 2540e5;
+    double baseline = 295e5;
     double start = 1e5;
-    double stop = 2540e5;
+    //double stop = 2540e5;
+    double stop = baseline;
     double step =   10e5;
 
 
