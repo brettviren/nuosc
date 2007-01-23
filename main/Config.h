@@ -32,6 +32,9 @@ struct Config {
     /// Spew usage and exit
     void usage(const char* message, bool full=false);
 
+    /// Return a human readable string describing setup
+    std::string as_string() const;
+
 private:
     Options* options;
 

@@ -23,6 +23,8 @@ int main (int argc, const char *argv[])
     if (!energies.size()) config.usage("Failed to parse energy description");
     if (!baselines.size()) config.usage("Failed to parse baseline description");
 
+    cerr << config.as_string() << endl;
+
     for (size_t bli = 0; bli < baselines.size(); ++bli) {
 	double baseline_cm = baselines[bli]*1.0e5; // km to cm
 

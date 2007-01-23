@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <sstream>
 using namespace std;
 
 const char* optv[] = {
@@ -196,3 +197,31 @@ Config::Config(int argc, const char** argv)
 
 Config::~Config() { delete options; options = 0; }
 
+string Config::as_string() const
+{
+    stringstream ss;
+
+    if (op.is_antineutrino()) ss << "anti-";
+    switch(abs(nu_num)) {
+    case 1: ss << "nu_e\n"; break;
+    case 2: ss << "nu_mu\n"; break;
+    case 3: ss << "nu_tau\n"; break;
+    default: cerr << " UNKNOWN NEUTRINO\n"; break;
+    }
+
+    ss << "dms21   = " << op.get_dms21() << endl
+       << "dms31   = " << op.get_dms31() << endl
+       << "theta12 = " << op.get_theta12() << endl
+       << "theta23 = " << op.get_theta23() << endl
+       << "theta13 = " << op.get_theta13() << endl
+       << "ss2t12  = " << op.get_ss2t12() << endl
+       << "ss2t23  = " << op.get_ss2t23() << endl
+       << "ss2t13  = " << op.get_ss2t13() << endl
+       << "deltacp = " << op.get_deltacp() << endl
+       << "calculation = (" << calc_desc << ")" << endl;
+    ss << "baseline = " << baseline_desc << endl
+       << "energy = " << energy_desc << endl
+       << "density = " << density_desc << endl;
+
+    return ss.str();
+}
