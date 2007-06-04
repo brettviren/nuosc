@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////
 //
-// $Id: OdeFunc.h,v 1.5 2003-07-18 17:33:08 bviren Exp $
+// $Id: OdeFunc.h,v 1.6 2007-06-04 16:42:14 bviren Exp $
 //
 // OdeFunc
 //
@@ -103,7 +103,7 @@ private:
                                                ComplexVector y, double prec=0);
 
     typedef ComplexVector (OdeFunc::* OdeStepper)(double x, double& step_size, 
-                                                  ComplexVector y, double prec=0);
+                                                  ComplexVector y, double prec);
 
     // The one we use
     OdeStepper m_stepper;

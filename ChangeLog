@@ -1,0 +1,7 @@
+2007-04-03  Brett Viren  <bv@bnl.gov>
+
+	* Convert build to autotools.
+
+	* Only build "nuosc" for now.
+	
+
