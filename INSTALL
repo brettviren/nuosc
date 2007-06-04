@@ -7,18 +7,16 @@ blitz++ (Debian package or from http://oonumerics.org/blitz/)
 Installation:
 =============
 
-Edit config.mk file to suit your local system.
+libnuosc++ is now built using GNU autotools.
 
 Type:
 
+  ./configure
   make
   make install
 
-This will install things based on the PREFIX variable.  
+You can see what build options are available via
 
-To run the main program (genprob) you may need to add 
+  ./configure --help
 
-  PREFIX/lib
-
-to your LD_LIBRARY_PATH
 
