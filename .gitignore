@@ -1,0 +1,14 @@
+*~
+Makefile
+Makefile.in
+aclocal.m4
+*.cache
+config.*
+configure
+depcomp
+install-sh
+libtool
+ltmain.sh
+.deps
+missing
+stamp*
