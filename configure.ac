@@ -2,8 +2,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(libnuosc++, 1.0, bv@bnl.gov)
-AM_INIT_AUTOMAKE(libnuosc++, 1.0)
+AC_INIT(libnuosc++, 1.1, bv@bnl.gov)
+AM_INIT_AUTOMAKE(libnuosc++, 1.1)
 
 AC_CONFIG_SRCDIR([source/nuosc_prob.cc])
 AM_CONFIG_HEADER(config.h)
@@ -36,6 +36,7 @@ AC_CHECK_FUNCS([pow sqrt strchr strdup strpbrk strrchr])
 # need to add main and test
 AC_CONFIG_FILES([Makefile
                  source/Makefile
+                 include/Makefile
                  main/Makefile])
 
 AC_OUTPUT
