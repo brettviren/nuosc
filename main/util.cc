@@ -1,6 +1,7 @@
 #include "util.h"
 #include <nuosc_earth.h>
 #include <cmath>
+#include <cstdlib>
 #include <iostream>
 using namespace std;
 vector<string> split(string s, char c)

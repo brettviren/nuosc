@@ -32,7 +32,7 @@ using namespace std;
 
 // #include <stdlib.h>
 #include <ctype.h>
-#include <string>
+#include <cstring>
 
 #include "options.h"
 
