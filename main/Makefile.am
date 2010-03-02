@@ -1,5 +1,5 @@
 INCLUDES = -I$(top_srcdir)/include ${BLITZ_INCLUDE}
-LDADD = ${BLITZ_LIB} -L$(top_srcdir)/source -lnuosc++
+LDADD = -L$(top_srcdir)/source -lnuosc++ ${BLITZ_LIB}
 
 bin_PROGRAMS = nuosc
 nuosc_SOURCES = nuosc.cc options.cc util.cc Config.cc ProbCalc.cc \
