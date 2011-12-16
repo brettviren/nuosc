@@ -1,6 +1,22 @@
+SCons based install
+===================
+
 To install you need scons.  Install that and type:
 
-  scons
+  scons [--prefix=/path/to/install/prefix]
+
+This will build a "libnuosc++.so" shared library and main executable
+"nuosc" that will be runable from the build directory:
+
+ ./nuosc -h
+
+If the '--prefix' option is given then things will be installed in
+some other location.
+
+
+Obsolete autoconf/automake install
+==================================
 
 There is also an old autoconf/automake build system but suffers from
-bitrot and archaisms.
+bitrot and archaisms.  If you want to try it, expect problems.
+
