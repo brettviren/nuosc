@@ -7,6 +7,7 @@ AM_INIT_AUTOMAKE(libnuosc++, 1.3)
 
 AC_CONFIG_SRCDIR([source/nuosc_prob.cc])
 AM_CONFIG_HEADER(config.h)
+AC_CONFIG_MACRO_DIR([m4])
 
 # Checks for programs.
 AC_PROG_CXX
