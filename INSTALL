@@ -1,22 +1,6 @@
-Pre-requirements:
-=================
+To install you need scons.  Install that and type:
 
-For the matrix calculations you will need a decent C++ compiler and
-blitz++ (Debian package or from http://oonumerics.org/blitz/)
+  scons
 
-Installation:
-=============
-
-libnuosc++ is now built using GNU autotools.
-
-Type:
-
-  ./configure
-  make
-  make install
-
-You can see what build options are available via
-
-  ./configure --help
-
-
+There is also an old autoconf/automake build system but suffers from
+bitrot and archaisms.

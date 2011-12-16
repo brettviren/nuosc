@@ -1,12 +1,12 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
+AC_INIT([libnuosc++], [1.4], [bv@bnl.gov])
 AC_PREREQ(2.61)
-AC_INIT(libnuosc++, 1.3, bv@bnl.gov)
-AM_INIT_AUTOMAKE(libnuosc++, 1.3)
-
+AM_INIT_AUTOMAKE(libnuosc++, 1.4)
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([source/nuosc_prob.cc])
-AM_CONFIG_HEADER(config.h)
+# AM_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([m4])
 
 # Checks for programs.

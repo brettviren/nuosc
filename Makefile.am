@@ -1,2 +1,2 @@
 SUBDIRS = source main include
-ACLOCAL_AMFLAGS in Makefile.am
+ACLOCAL_AMFLAGS = -I m4
