@@ -90,10 +90,10 @@ public:
 
     void set_dms21(double ev2);
     void set_dms31(double ev2);
-    void set_theta12(double deg);
-    void set_theta23(double deg);
-    void set_theta13(double deg);
-    void set_deltacp(double deg);
+    void set_theta12(double rad);
+    void set_theta23(double rad);
+    void set_theta13(double rad);
+    void set_deltacp(double rad);
     
     // needed to deal with the matrix cacheing
     OscParam(const OscParam& that);

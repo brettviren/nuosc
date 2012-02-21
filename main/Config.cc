@@ -117,9 +117,9 @@ static bool set_mixing(OscParam& op, string desc)
     if (vd.size() != 3) return false;
     
     if (desc.substr(0,3) == "ang") {
-	op.set_theta12(vd[0]);
-	op.set_theta23(vd[1]);
-	op.set_theta13(vd[2]);
+	op.set_theta12(vd[0]*M_PI/180.0);
+	op.set_theta23(vd[1]*M_PI/180.0);
+	op.set_theta13(vd[2]*M_PI/180.0);
     }
     else if (desc.substr(0,3) == "sin") {
 	op.set_theta12(unfrob(vd[0]));
@@ -176,7 +176,7 @@ Config::Config(int argc, const char** argv)
 	    break;
         case 'd':		// delta
 	    if (!optarg) usage("No CP phase angle given with -d");
-	    op.set_deltacp(atof(optarg));
+	    op.set_deltacp(atof(optarg)*M_PI/180.0);
 	    break;
         case 'D':		// density
 	    if (!optarg) usage("No density description given with -D");

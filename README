@@ -79,6 +79,8 @@ The internal library units are uniform throughout:
 	[energy]	= eV
 	[density]	= g/cm^3
 
+See below for notes regarding units on the command line interfaces.
+
 A note on anti-neutrinos: CP symetry is broken in that the matter
 potential and the CP phase changes sign between neutrino and
 anti-neutrino cases.  In the code this is handled inside by the
