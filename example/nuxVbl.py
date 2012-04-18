@@ -57,7 +57,7 @@ def plot(basename, extra_vecfile = None):
     for num,g in enumerate(prob):
         color = colors[ordering[num]]
         g.SetLineColor(color)
-        g.SetLineWidth(0)
+        g.SetLineWidth(1)
         g.SetFillColor(color)
         continue
 
@@ -81,8 +81,20 @@ def plot(basename, extra_vecfile = None):
 
     graph = ROOT.TGraph()
     prob.reverse()
+    stash = []
     for count,p in enumerate(prob):
-        p.Draw("B")
+        x = p.GetX()
+        y = p.GetY()
+        n = p.GetN()
+        h = ROOT.TH1F("p%d"%count, "prob%d"%count, n, x[0], x[n-1])
+        h.SetContent(y)
+        h.SetLineWidth(0)
+        h.SetLineColor(p.GetLineColor())
+        h.SetFillColor(p.GetLineColor())
+        h.Draw("same")
+        stash.append(h)
+        print 'Drawing',h.GetName()
+        #p.Draw("CB")
 
     for ep in extra_prob:
         ep[ordering[0]].Draw("C")

@@ -19,3 +19,6 @@ do_coarse () {
 }
 
 do_fine
+#do_coarse
+
+#foo=$(./nuxVbl.sh 2 1 20000 10) && python nuxVbl.py $foo && echo $foo.pdf
