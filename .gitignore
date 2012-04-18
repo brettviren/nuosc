@@ -1,2 +1,9 @@
 *~
 .sconsign.dblite
+*.vec
+*.nfo
+*.tgz
+*.so
+nuosc
+*.pdf
+*.ps
