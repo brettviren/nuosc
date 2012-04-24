@@ -35,8 +35,14 @@ def plot(basename, extra_vecfile = None):
     vecfile = basename + '.vec'
     print basename
     printfile = basename + '.pdf'
-    name,gev,maxbl = basename.split('_')
+    parts = basename.split('_')
+    name,gev,maxbl = parts[:3]
     maxbl = int(maxbl)
+    try:
+        mhv = parts[3]
+        mhv = ['Normal Hierarchy','Inverted Hierarchy'][['nh','rh'].index(mhv)]
+    except IndexError:
+        mhv = 'Vacuum'
 
     # style
     colors = [2,1,4]            # [nue,numu,nutau]
@@ -51,7 +57,7 @@ def plot(basename, extra_vecfile = None):
     if name == 'nutau':
         name2rootex = '#nu_{#tau}'
 
-    title = 'Probability for %s oscillation at %s' % (name2rootex,gev2rootex(gev))
+    title = 'Probability for %s oscillation at %s (%s)' % (name2rootex,gev2rootex(gev),mhv)
 
     prob = file2cumgraphs(vecfile, ordering)
     for num,g in enumerate(prob):
