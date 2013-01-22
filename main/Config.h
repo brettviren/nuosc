@@ -25,6 +25,10 @@ struct Config {
     std::string calc_desc;	// calculation type description
     std::string density_desc;	// density description
 
+    std::string data_file;        // output data file (def=stdout)
+    std::string info_file;        // output meta data file (def=stderr)
+
+
     /// Create a main program configuration
     Config(int argc, const char** argv);
     ~Config();

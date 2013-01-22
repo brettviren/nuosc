@@ -4,6 +4,8 @@
 #include <nuosc_prob.h>
 #include <vector>
 #include <iostream>
+#include <fstream>
+
 using namespace std;
 int main (int argc, const char *argv[])
 {
@@ -23,7 +25,10 @@ int main (int argc, const char *argv[])
     if (!energies.size()) config.usage("Failed to parse energy description");
     if (!baselines.size()) config.usage("Failed to parse baseline description");
 
-    cerr << config.as_string() << endl;
+    ofstream info_fstr(config.info_file.c_str());
+    info_fstr << config.as_string() << endl;
+
+    ofstream data_fstr(config.data_file.c_str());
 
     for (size_t bli = 0; bli < baselines.size(); ++bli) {
 	double baseline_cm = baselines[bli]*1.0e5; // km to cm
@@ -33,10 +38,10 @@ int main (int argc, const char *argv[])
 
 	    ComplexVector nuf = (*pcp)(energy_ev,baseline_cm);
 	    vector<double> p = nuosc_amplitude_to_prob(nuf);
-	    cout << energies[eni] << " " << baselines[bli] << " " 
-		 << p[0] << " " << p[1] << " " << p[2] << " "
-		 << en_direct[eni] << " " << bl_direct[bli] 
-		 << endl;
+	    data_fstr << energies[eni] << " " << baselines[bli] << " " 
+                      << p[0] << " " << p[1] << " " << p[2] << " "
+                      << en_direct[eni] << " " << bl_direct[bli] 
+                      << endl;
 	}
     }
 

@@ -19,6 +19,8 @@ const char* optv[] = {
     "d:delta <CP phase>",
     "D:density <density description>",
     "c:calculation <calculation description",
+    "o:data <filename>",
+    "i:info <filename>",
     "h|help",
     0
 };
@@ -83,6 +85,10 @@ const char* desc[] = {
     "\t\tFull stepping: \"step\"\n"
     "\tDefault is \"matrix\"\n",
 
+    // output
+    "\tSet the file to receive output, stdout is default",
+    "\tSet the file to receive meta data info, stderr is default",
+
     // help
     "\tPrint this message\n",
 
@@ -139,6 +145,9 @@ Config::Config(int argc, const char** argv)
     calc_desc = "matrix";
     density_desc = "con:0.0";
 
+    data_file = "/dev/stdout";
+    info_file = "/dev/stderr";
+
     options = new Options(*argv,optv);
     OptArgvIter optitr(argc-1,argv+1);
     const char* optarg;
@@ -186,6 +195,14 @@ Config::Config(int argc, const char** argv)
 	    if (!optarg) usage("No calculation description given with -c");
 	    calc_desc = optarg;
 	    break;
+        case 'o':
+            if (!optarg) usage("No output data file given with -o");
+            data_file = optarg;
+            break;
+        case 'i':
+            if (!optarg) usage("No output info file given with -i");
+            info_file = optarg;
+            break;
 	case 'h':
 	    usage(0,true);
 	default:
