@@ -28,6 +28,12 @@ do_mh_3 () {
     python nuxVbl.py numu_3_3000_nh
     python nuxVbl.py numu_3_3000_rh
 }
+do_mh_2 () {
+    ./nuxVbl.sh 2 2 3000 2
+    python nuxVbl.py numu_2_3000
+    python nuxVbl.py numu_2_3000_nh
+    python nuxVbl.py numu_2_3000_rh
+}
 do_mh_1 () {
     ./nuxVbl.sh 2 1 2000 2
     python nuxVbl.py numu_1_2000
@@ -37,6 +43,7 @@ do_mh_1 () {
     
 
 do_mh_1
+do_mh_2
 do_mh_3
 do_mh_4
 do_vac
