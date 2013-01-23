@@ -1,0 +1,42 @@
+* CMake based install
+
+To install via cmake do:
+
+#+BEGIN_EXAMPLE
+mkdir /path/to/some/build/directory
+cd /path/to/some/build/directory
+cmake /path/to/nuosc
+make all install
+#+END_EXAMPLE
+
+To control where things are installed modify the above =cmake= command like:
+
+#+BEGIN_EXAMPLE
+cmake -DCMAKE_INSTALL_PREFIX:PATH=/path/to/install/area
+#+END_EXAMPLE
+
+
+* SCons based install
+
+To install you need scons.  Install that and type:
+
+#+BEGIN_EXAMPLE
+scons [--prefix=/path/to/install/prefix]
+#+END_EXAMPLE
+
+This will build a "libnuosc++.so" shared library and main executable
+"nuosc" that will be runable from the build directory:
+
+#+BEGIN_EXAMPLE
+./nuosc -h
+#+END_EXAMPLE
+
+If the '--prefix' option is given then things will be installed in
+some other location.
+
+
+* Obsolete autoconf/automake install
+
+There is also an old autoconf/automake build system but suffers from
+bitrot and archaisms.  If you want to try it, expect problems.
+

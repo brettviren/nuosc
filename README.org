@@ -1,13 +1,10 @@
+libnuosc++ - A library for calculating 3 neutrino oscillation probabilities.
 
- libnuosc++ - A library for calculating 3 neutrino oscillation probabilities.
-
-Installation:
-=============
+* Installation:
 
 See the INSTALL file.
 
-Introduction:
-=============
+* Introduction:
 
 This library provides various methods to calculate 3 neutrino
 oscillation probabilities with and with out matter effects as well as
@@ -16,7 +13,9 @@ handled.
 
 It does this by solving the evolution equation:
 
-	d(nu)/dx = [-i/(2E) U M^2 Udagger -iV] nu(x)
+#+BEGIN_EXAMPLE
+d(nu)/dx = [-i/(2E) U M^2 Udagger -iV] nu(x)
+#+END_EXAMPLE
 
 where U is the (potentially complex) mixing matrix, M^2 is
 diag(0,dm^2_21,dm^2_31) and V = diag(A,0,0) is the matter effect term.
@@ -53,18 +52,19 @@ shell.  Second, when calculating the average the density as a function
 of radius is assumed to be linear.  
 
 
-Implementation notes:
-====================
+* Implementation notes:
 
 The main interface are the functions in nuosc_prob.h.  There are 6
 probability calculators covering the 3 matter effect possibilities
 (vacuum, constant and PREM) times the 2 calculation methods (matrix
 and step).  They are named like:
 
-	nuosc_prob_[matter-type]_[calculation-type]()
+#+BEGIN_EXAMPLE
+nuosc_prob_[matter-type]_[calculation-type]()
+#+END_EXAMPLE
 
-With "matter-type" = "vacuum", "constant" or "prem" and
-"calculation-type" = "matrix" or "step".
+With =matter-type= as =vacuum=, =constant= or =prem= and
+=calculation-type= as =matrix= or =step=.
 
 They take a ComplexVector (see matrix.h) holding the amplitude of the
 initial neutrino, the oscilation parameters (bunded in OscParam, see
@@ -73,11 +73,11 @@ OscParam.h) as well as an energy and baseline.  Additionally, the
 
 The internal library units are uniform throughout:
 
-	[dm^2]		= eV^2
-	[angle]		= radians
-	[length]	= cm
-	[energy]	= eV
-	[density]	= g/cm^3
+ - dm^2 :: eV^2
+ - angle :: radians
+ - length :: cm
+ - energy :: eV
+ - density :: g/cm^3
 
 See below for notes regarding units on the command line interfaces.
 
@@ -94,17 +94,17 @@ for the evolution equation solution, one does not need to worry about
 nu/antinu issues.  This is how nuosc_prob.cc functions behave.
 
 
-Command line interface.
-=======================
+* Command line interface.
 
-There exists two command line programs, "genprob" and the newer
-"nuosc" (in main/) which give access to all these calculations.  The
-former is deprecated in favor of the latter.
+There exists two command line programs, "genprob" (now obsolete) and
+the newer "nuosc" (in main/) which give access to all these
+calculations.  The former is deprecated in favor of the latter.
 
 Simply running it w/out any args will produce a usage summary or run
 with "nuosc -h" to get a detailed explanation of the command line
 flags.
 
+#+BEGIN_EXAMPLE
 shell> nuosc -h
 Option summary:
 usage: nuosc [-n|--neutrino <initial neutrino number>]
@@ -177,11 +177,15 @@ Options details:
 
 [-h|--help]
 	Print this message
+#+END_EXAMPLE
+
 
 
 The ouput is 
 
+#+BEGIN_EXAMPLE
 	<energy> <baseline> <P(nux->nue)> <P(nux->numu)> <P(nux->nutau)>
+#+END_EXAMPLE
 
 Notes:
 
