@@ -9,8 +9,8 @@ file(GLOB mainsrc "main/*.cc")
 add_library(nuosc++ SHARED ${sources})
 target_link_libraries(nuosc++ blitz)
 
-add_executable(nuosc ${mainsrc})
-target_link_libraries(nuosc nuosc++ blitz)
+add_executable(nuosc ${mainsrc} ${sources})
+target_link_libraries(nuosc blitz)
 
 install(TARGETS nuosc nuosc++
   RUNTIME DESTINATION bin
