@@ -27,7 +27,7 @@ vector<double> strings2doubles(const vector<string>& vs)
 /** Convert a description string into a vector of values
     Linear disance range:       "lin:start,stop,step"
     Logarithmic distance range: "log:start,stop,step"
-    A single distance value:    "one:value"
+    A single distance value:    "one:value" or just "value"
     Zenith angle:               "zen:start,stop,step"
     cos(Zenith angle):          "cos:start,stop,step"
 */
@@ -39,8 +39,13 @@ vector<double> desc2vector(string desc)
 }
 vector<double> desc2vector(string desc, vector<double>& dir)
 {
-    string type = desc.substr(0,3);
-    vector<double> data = strings2doubles(split(desc.substr(4),','));
+    string type = "one";
+    size_t start = 0;
+    if (desc[3] == ':') {
+        type = desc.substr(0,3);
+        start = 4;
+    }
+    vector<double> data = strings2doubles(split(desc.substr(start),','));
 
     vector<double> vd;
 
