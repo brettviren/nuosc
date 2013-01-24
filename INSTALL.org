@@ -12,7 +12,7 @@ make all install
 To control where things are installed modify the above =cmake= command like:
 
 #+BEGIN_EXAMPLE
-cmake -DCMAKE_INSTALL_PREFIX:PATH=/path/to/install/area
+cmake -DCMAKE_INSTALL_PREFIX:PATH=/path/to/install/area /path/to/nuosc
 #+END_EXAMPLE
 
 
