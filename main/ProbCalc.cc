@@ -54,8 +54,22 @@ class PCConCalc : public ProbCalc {
 public:
 
     PCConCalc(string calc_type, double dens) : density(dens) {
-	if (calc_type == "matrix") func = nuosc_prob_constant_matrix;
-	else func = nuosc_prob_constant_step;
+	if (calc_type == "matrix") {
+	    if (dens < 0.0) {
+		func = nuosc_prob_vacuum_matrix;
+	    }
+	    else {
+		func = nuosc_prob_constant_matrix;
+	    }
+	}
+	else {
+	    if (dens < 0.0) {
+		func = nuosc_prob_vacuum_step;
+	    }
+	    else {
+		func = nuosc_prob_constant_step;
+	    }
+	}
     }
     ComplexVector operator()(double energy, double baseline) {
 	return func(nu0,op,energy,baseline,density);

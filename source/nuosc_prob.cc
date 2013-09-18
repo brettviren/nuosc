@@ -19,7 +19,8 @@ vector<double> nuosc_amplitude_to_prob(ComplexVector amp)
 
 ComplexVector nuosc_prob_vacuum_matrix(ComplexVector initial_neutrino,
                                        const OscParam& op,
-                                       double energy, double baseline)
+                                       double energy, double baseline,
+				       double /*ignored*/)
 {
     complex<double> param = -0.5*EYE*baseline/(energy*hbarc);
 
@@ -50,7 +51,8 @@ ComplexVector nuosc_prob_vacuum_matrix(ComplexVector initial_neutrino,
 
 ComplexVector nuosc_prob_vacuum_step(ComplexVector initial_neutrino,
                                      const OscParam& op,
-                                     double energy, double baseline)
+                                     double energy, double baseline,
+				     double /*ignored*/)
 {
     double oscilation_length = fabs(M_PI*8.0*energy*hbarc/op.get_dms31());
 

@@ -30,13 +30,15 @@ std::vector<double> nuosc_amplitude_to_prob(ComplexVector amp);
 
 ComplexVector nuosc_prob_vacuum_matrix(ComplexVector initial_neutrino,
                                        const OscParam& op,
-                                       double energy, double baseline);
+                                       double energy, double baseline,
+				       double density = 0.0 /*ignored*/);
 
 /// Probability for no matter, calculated by stepping the evolution
 /// equation.
 ComplexVector nuosc_prob_vacuum_step(ComplexVector initial_neutrino,
                                      const OscParam& op,
-                                     double energy, double baseline);
+                                     double energy, double baseline,
+				     double density = 0.0 /*ignored*/);
 
 ComplexVector nuosc_prob_constant_matrix(ComplexVector initial_neutrino,
                                          const OscParam& op,
