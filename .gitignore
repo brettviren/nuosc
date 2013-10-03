@@ -7,3 +7,6 @@
 nuosc
 *.pdf
 *.ps
+.lock-waf*
+.waf-*
+build
