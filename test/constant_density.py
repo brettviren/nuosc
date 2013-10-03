@@ -4,14 +4,30 @@ import ROOT
 import os
 from os import path as osp
 from subprocess import check_call
+from glob import glob
 
-mydir=osp.dirname(osp.realpath(__file__))
-outdir=osp.join(mydir,'constant_density')
+test_dir=osp.dirname(osp.realpath(__file__))
+outdir=osp.join(test_dir,'constant_density')
 
-nuosc_pat = "{executable} -n{nu} -e{energy} -b{baseline} -D con:{density} -c {calc} -d {dcp} -o {vecfile} -i {infofile}"
+def find_nuosc():
+    src_dir = osp.dirname(test_dir)
+    build_maybe = glob('%s/*'%src_dir)
+    to_check = [src_dir] + build_maybe + os.environ['PATH'].split(':')
+    for maybe_dir in to_check:
+        #print 'Checking: %s' % maybe_dir
+        if not osp.isdir(maybe_dir):
+            continue
+        maybe = osp.join(maybe_dir, 'nuosc')
+        if osp.exists(maybe):
+            print 'Using %s' % maybe
+            return maybe
+    raise RuntimeError('Failed to locate "nuosc" executable')
+
+
+nuosc_pat = "{executable} -n{nu} -e{energy} -b{baseline} -D con:{density} -c {calc} -d {dcp} > {vecfile} 2> {infofile}"
 nu_names = ['','nue','numu','nutau']
 defaults = dict(
-    executable = 'nuosc',
+    executable = find_nuosc(),
     nu = 2,
     nu_name = nu_names[2],
     energy = 'lin:0.1,10,0.1',
@@ -39,6 +55,8 @@ def gen():
                 yield p
 
 def make_vecfile(**p):
+    if not osp.exists(outdir):
+        os.makedirs(outdir)
     already = p['vecfile']
     if osp.exists(already) and not p.get('force'):
         print 'Already produced %s' % already
@@ -46,12 +64,6 @@ def make_vecfile(**p):
     cmd = nuosc_pat.format(**p)
     print cmd
     check_call(cmd, shell=True)
-
-def assure_vecfiles():
-    if not osp.exists(outdir):
-        os.makedirs(outdir)
-    for p in gen():
-        make_vecfile(**p)
 
 def format_dict(dat, formatter = str.format, **kwds):
     unformatted = dict(dat)
@@ -103,8 +115,6 @@ def plot_all_numu2nue(printer):
 
         printer()
 
-
-#assure_vecfiles()
 
 class Printer:
     def __init__(self, filename, canvas = None):
