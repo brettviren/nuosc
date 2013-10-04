@@ -13,6 +13,9 @@ def options(opt):
 
 def configure(conf):
     conf.load('compiler_cxx') 
+
+    conf.env.append_unique('CXXFLAGS', ['-O2', '-g']) 
+
     conf.check(lib='blitz',
                compiler='cxx',
                uselib_store='BLITZ',
