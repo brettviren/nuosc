@@ -8,6 +8,9 @@ This is a waf wscript file.  It builds this package.  To use it do:
 
 '''
 
+top = '.'
+out = 'tmp'
+
 def options(opt):
     opt.load('compiler_cxx')
 
@@ -20,12 +23,14 @@ def configure(conf):
                compiler='cxx',
                uselib_store='BLITZ',
                mandatory=True)
+    conf.recurse('test')
 
 def build(bld):
     lib_source = bld.path.ant_glob('source/*.cc')
     main_source = bld.path.ant_glob('main/*.cc')
 
     bld.program(
+        name = 'nuosc_exe',
         source = main_source, 
         includes = './include ./main',
         target = 'nuosc', 
@@ -47,3 +52,7 @@ def build(bld):
         target = 'nuosc++',
         install_path='${PREFIX}/lib') 
 
+    bld.recurse('test')
+
+def test(tst):
+    tst.recurse('test')

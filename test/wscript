@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+'''
+Run some of the tests under waf
+'''
+
+import os
+
+def configure(cfg):
+    return
+
+def build(bld):
+
+    bld.add_group()
+
+    def run_nuosc(task):
+        nuoscexe = task.generator.bld.path.get_bld().parent.find_resource('nuosc').abspath()
+        #nuoscexe = task.inputs[0].abspath()
+        cmdl_file = task.inputs[0].abspath()
+        data_file = task.outputs[0].abspath()
+        print nuoscexe, cmdl_file, data_file
+
+        import nuosc
+        d = nuosc.read_param_file(cmdl_file)
+        base = os.path.splitext(data_file)[0]
+        d['data'] = data_file
+        d['info'] = base + '.info'
+        d['cmdline'] = base + '.cmdline'
+        cmd = [nuoscexe]
+        cmd += ['--%s=%s' % kv for kv in d.items()]
+        cmd = ' '.join(cmd)
+        print cmd
+        return task.exec_command(cmd)
+        
+    bld(rule = run_nuosc,
+        #source = [nuoscexe, "nodes.cmdline"],
+        source = ["nodes.cmdline"],
+        target = "nodes.data")
+
+def test(tst):
+    print 'PATH:',tst.path.search('nuosc')
+
+    #nuoscexe = tst.path.get_bld().parent.find_resource('nuosc').abspath()
+    #tst.exec_command(nuoscexe)
