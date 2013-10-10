@@ -24,10 +24,11 @@ struct Config {
     std::string baseline_desc;	// baseline range description
     std::string calc_desc;	// calculation type description
     std::string density_desc;	// density description
+    std::string mix_desc; 	// mixing angle description
 
     std::string data_file;        // output data file (def=stdout)
     std::string info_file;        // output meta data file (def=stderr)
-
+    std::string cmdline_file;	  // output meta data file (def=)
 
     /// Create a main program configuration
     Config(int argc, const char** argv);
@@ -38,6 +39,9 @@ struct Config {
 
     /// Return a human readable string describing setup
     std::string as_string() const;
+
+    /// As above but exactly matching command line args
+    std::string as_string_cmdline() const;
 
 private:
     Options* options;

@@ -21,6 +21,7 @@ const char* optv[] = {
     "c:calculation <calculation description",
     "o:data <filename>",
     "i:info <filename>",
+    "I:cmdline <filename>",
     "h|help",
     0
 };
@@ -120,7 +121,10 @@ static double unfrob(double s22t) { return asin(sqrt(s22t))/2.0; }
 static bool set_mixing(OscParam& op, string desc)
 {
     vector<double> vd = strings2doubles(split((desc.substr(4)),','));
-    if (vd.size() != 3) return false;
+    if (vd.size() != 3) {
+	cerr << "Need comma-separated triple, got: " << desc.substr(4) << endl;
+	return false;
+    }
     
     if (desc.substr(0,3) == "ang") {
 	op.set_theta12(vd[0]*M_PI/180.0);
@@ -135,6 +139,15 @@ static bool set_mixing(OscParam& op, string desc)
     else return false;
     return true;
 }
+static string get_mixing(const OscParam& op)
+{
+    stringstream ss;
+    ss << "ang:" 
+       << op.get_theta12()*180.0/M_PI << ","
+       << op.get_theta23()*180.0/M_PI << ","
+       << op.get_theta13()*180.0/M_PI;
+    return ss.str();
+}
 
 Config::Config(int argc, const char** argv)
 {
@@ -144,9 +157,14 @@ Config::Config(int argc, const char** argv)
     baseline_desc = "one:1";
     calc_desc = "matrix";
     density_desc = "con:0.0";
-
+    mix_desc = "sin:0.8,1.0,0.1";
+    if ( !set_mixing(op, mix_desc) ) {
+	cerr << "Failed to set mixing description: " << mix_desc << endl;
+	abort();
+    }
     data_file = "/dev/stdout";
     info_file = "/dev/stderr";
+    cmdline_file = "";
 
     options = new Options(*argv,optv);
     OptArgvIter optitr(argc-1,argv+1);
@@ -172,6 +190,7 @@ Config::Config(int argc, const char** argv)
 	    break;
         case 'm':		// mixing 
 	    if (!optarg) usage("No mixing description given with -m");
+	    mix_desc = optarg;
 	    if (!set_mixing(op,optarg))
 		usage("Failed to parse mixing description");
 	    break;
@@ -203,6 +222,10 @@ Config::Config(int argc, const char** argv)
             if (!optarg) usage("No output info file given with -i");
             info_file = optarg;
             break;
+        case 'I':
+            if (!optarg) usage("No output info file given with -I");
+            cmdline_file = optarg;
+            break;
 	case 'h':
 	    usage(0,true);
 	default:
@@ -213,6 +236,32 @@ Config::Config(int argc, const char** argv)
 }
 
 Config::~Config() { delete options; options = 0; }
+
+string Config::as_string_cmdline() const
+{
+    stringstream ss;
+
+    ss << "neutrino = " << nu_num << endl
+       << "energy = " << energy_desc << endl
+       << "baseline = " << baseline_desc << endl;
+
+    ss << "mixing = ";
+    if (mix_desc.size()) {
+	ss << mix_desc;
+    }
+    else {
+	ss << get_mixing(op);
+    }
+    ss << endl;
+
+    ss << "sol = " << op.get_dms21() << endl
+       << "atm = " << op.get_dms31() << endl
+       << "delta = " << op.get_deltacp() << endl
+       << "density = " << density_desc << endl
+       << "calculation = " << calc_desc << endl;
+    return ss.str();
+
+}
 
 string Config::as_string() const
 {

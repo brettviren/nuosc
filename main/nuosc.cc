@@ -27,6 +27,10 @@ int main (int argc, const char *argv[])
 
     ofstream info_fstr(config.info_file.c_str());
     info_fstr << config.as_string() << endl;
+    if (config.cmdline_file.size()) {
+	ofstream fstr(config.cmdline_file.c_str());
+	fstr << config.as_string_cmdline() << endl;
+    }
 
     ofstream data_fstr(config.data_file.c_str());
 
