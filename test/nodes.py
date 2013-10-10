@@ -72,12 +72,6 @@ def pbl_book(binargs, name_pat = 'pbl_{inu_name}2{fnu_name}_{bl_name}',
     return h1d(name, title, *binargs)
     
 
-def pbl_fill(hist, ind, prob):
-    for d in prob.data:
-        en,bl = d[:2]
-        p = d[2+nu_ind]
-        hist.Fill(bl, en, p)
-    
 def pbl_fill_three(hists, data):
     for d in data:
         hists[0].Fill(d.en, d.a)
