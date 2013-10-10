@@ -12,3 +12,5 @@ nuosc
 build
 tmp
 install
+*.root
+*.pyc
