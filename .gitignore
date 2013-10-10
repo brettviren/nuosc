@@ -10,3 +10,5 @@ nuosc
 .lock-waf*
 .waf-*
 build
+tmp
+install

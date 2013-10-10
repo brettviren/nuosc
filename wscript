@@ -8,6 +8,9 @@ This is a waf wscript file.  It builds this package.  To use it do:
 
 '''
 
+import os
+import sys
+
 top = '.'
 out = 'tmp'
 
@@ -23,9 +26,18 @@ def configure(conf):
                compiler='cxx',
                uselib_store='BLITZ',
                mandatory=True)
+
+    pydir = os.path.join(conf.path.abspath(), 'python')
+    sys.path.insert(0,pydir)
+    conf.env.env = dict(os.environ)
+    conf.env.env['PYTHONPATH'] = os.path.pathsep.join(sys.path)
+
     conf.recurse('test')
 
 def build(bld):
+    pydir = os.path.join(bld.path.abspath(), 'python')
+    sys.path.insert(0,pydir)
+
     lib_source = bld.path.ant_glob('source/*.cc')
     main_source = bld.path.ant_glob('main/*.cc')
 

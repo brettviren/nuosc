@@ -1,6 +1,25 @@
+#+title: Installation
+
+There are several ways to install this package.  Pick the one you like.  The main products of the installation are the =nuosc= executable and the =libnuosc++= library.
+
+* Waf based install
+
+The simplest way to install is using the copy of [[https://code.google.com/p/waf/][waf]] provided:
+
+#+BEGIN_EXAMPLE
+$ ./waf --prefix=/path/to/install configure build install
+#+END_EXAMPLE
+
+Optional tests may be run with:
+
+#+BEGIN_EXAMPLE
+$ ./waf test
+#+END_EXAMPLE
+
+
 * CMake based install
 
-To install via cmake do:
+To install via =cmake= do:
 
 #+BEGIN_EXAMPLE
 mkdir /path/to/some/build/directory
@@ -18,7 +37,7 @@ cmake -DCMAKE_INSTALL_PREFIX:PATH=/path/to/install/area /path/to/nuosc
 
 * SCons based install
 
-To install you need scons.  Install that and type:
+To install with this method you need =scons=.  Install that and type:
 
 #+BEGIN_EXAMPLE
 scons [--prefix=/path/to/install/prefix]

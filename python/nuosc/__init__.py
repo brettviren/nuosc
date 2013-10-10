@@ -3,7 +3,7 @@
 import os
 import os.path as osp
 from subprocess import check_output
-
+from collections import namedtuple
 
 def find_nuosc_exec():
     to_check = os.environ['PATH'].split(':')
@@ -40,6 +40,29 @@ def write_param_file(filename, **kwds):
         fp.write('\n'.join(lines))
         fp.write('\n')
     return
+
+
+OscProb = namedtuple('OscProb', 'en bl a b c enl bll')
+OscProbSet = namedtuple('OscProbSet', 'data en bl enl bll')
+def read_data(filename):
+    '''
+    Read a nuosc data file and provide the data as an OscProbSet
+    '''
+    sets = [set() for x in range(5)]
+
+    with open(filename) as fp:
+        for line in fp.readlines():
+            line = line.strip()
+            if not line:
+                continue
+            parts = OscProb(*[float(x.strip()) for x in line.split()])
+            sets[0].add(parts)
+            sets[1].add(parts[0])
+            sets[2].add(parts[1])
+            sets[3].add(parts[5])
+            sets[4].add(parts[6])
+    return OscProbSet(*sets)
+    
 
 def call(**kwds):
     '''Generate oscillation probabilities using the nuosc executable.
