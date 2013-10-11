@@ -54,6 +54,8 @@ of radius is assumed to be linear.
 
 * Implementation notes:
 
+An important note about the CP phase convention is in [[doc/cp-phase-convention/README.org]].
+
 The main interface are the functions in nuosc_prob.h.  There are 6
 probability calculators covering the 3 matter effect possibilities
 (vacuum, constant and PREM) times the 2 calculation methods (matrix

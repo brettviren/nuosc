@@ -1,0 +1,6 @@
+#+title: CP Phase Convention in =nuosc=/=libnuosc++=
+
+Prior to 2013/10/11, prior to tag 0.1, the CP phase used by =nuosc= was opposite from the most prevalent convention.  The library remains unchanged but the =nuosc= command line program applies a =-1= to the CP phase such that it appears to follow the prevalent convention.
+
+The [[../../test/test_cp_phi.py][test/test_cp_phi.py]] test output is shown in [[./before/]] and [[./after]].
+

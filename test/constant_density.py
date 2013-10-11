@@ -43,7 +43,7 @@ defaults = dict(
     )
 
 def gen():
-    for dcp in [0, 45, 90]:
+    for dcp in [0, 45, -45, 90]:
         for dens in [-1,0,3]:
             for calc in ['matrix', 'step']:
                 p = dict(defaults, dcp=dcp, density=dens, calc=calc)

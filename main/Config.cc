@@ -204,7 +204,7 @@ Config::Config(int argc, const char** argv)
 	    break;
         case 'd':		// delta
 	    if (!optarg) usage("No CP phase angle given with -d");
-	    op.set_deltacp(atof(optarg)*M_PI/180.0);
+	    op.set_deltacp(-1*atof(optarg)*M_PI/180.0);
 	    break;
         case 'D':		// density
 	    if (!optarg) usage("No density description given with -D");
