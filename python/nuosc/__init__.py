@@ -2,7 +2,7 @@
 
 import os
 import os.path as osp
-from subprocess import check_output
+from subprocess import check_output, check_call
 from collections import namedtuple
 
 def find_nuosc_exec():
@@ -77,12 +77,19 @@ def call(**kwds):
     args  = [exe]
     args += ['--%s %s' % kv for kv in kwds.items()]
     cmd = ' '.join(args)
+
+    if kwds.has_key('data'):
+        check_call(cmd, shell=True)
+        return 
+
+    ret = []
     out = check_output(cmd, shell=True)
     for line in out.split('\n'):
         line = line.strip()
         if not line:
             continue
-        yield map(float, line.split())
-    return
+        data = map(float, line.split())
+        ret.append(data)
+    return ret
     
     
