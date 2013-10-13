@@ -32,7 +32,7 @@ def configure(conf):
     conf.env.env = dict(os.environ)
     conf.env.env['PYTHONPATH'] = os.path.pathsep.join(sys.path)
 
-    conf.recurse('test')
+    #conf.recurse('test')
 
 def build(bld):
     pydir = os.path.join(bld.path.abspath(), 'python')
@@ -64,7 +64,5 @@ def build(bld):
         target = 'nuosc++',
         install_path='${PREFIX}/lib') 
 
-    bld.recurse('test')
+    #bld.recurse('test')
 
-def test(tst):
-    tst.recurse('test')

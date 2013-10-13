@@ -1,0 +1,16 @@
+#+title: Make a movie.
+
+The test in [[../test/movie.py]] will produce a number of frames that can be assembled into a movie.
+
+#+BEGIN_EXAMPLE
+$ cd nuosc/test/
+$ mkdir movie-test/
+$ python movie.py movie.nop 'movie-test/frames_{ind:03d}.gif'
+$ convert -delay 10 movie-test/*.gif -loop 0 movie-test.gif
+$ animate movie-test.gif
+#+END_EXAMPLE
+
+The =convert= and =animate= programs are part of ImageMagick.  The latter is just for viewing locally.
+
+[[./movie.gif]]
+

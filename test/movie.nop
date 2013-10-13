@@ -1,0 +1,10 @@
+neutrino = 2
+energy = lin:0.01,10,0.01
+baseline = lin:20,3000,20
+atm = 2.5e-3
+sol = 7.5e-5
+mixing = sin:0.7584,0.948,0.094
+delta = 0
+density = prem
+calculation = matrix
+
