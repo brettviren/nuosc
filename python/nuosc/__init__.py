@@ -5,6 +5,52 @@ import os.path as osp
 from subprocess import check_output, check_call
 from collections import namedtuple
 
+from ConfigParser import SafeConfigParser
+
+OscProb = namedtuple('OscProb', 'en bl a b c enl bll')
+OscProbSet = namedtuple('OscProbSet', 'data en bl enl bll')
+
+def config(filename):
+    '''Return a dictionary keyed by the section names in the
+    configuration file name(s).  Any section "defaults" will be loaded
+    first.  Subsequent sections will inherit this default.'''
+
+    cfg = SafeConfigParser()
+    cfg.read(filename)
+    base = dict(cfg.items("defaults"))
+    sections = cfg.sections()
+    sections.remove("defaults")
+    ret = dict()
+    for section in sections:
+        sec = dict(base, **dict(cfg.items(section)))
+        ret[section] = sec
+    return ret
+
+def config_sections(filename):
+    from ConfigParser import SafeConfigParser
+    cfg = SafeConfigParser()
+    cfg.read(filename)
+    sections = cfg.sections()
+    sections.remove("defaults")
+    return sections
+
+def cfg2nops(cfg_file, sections, outfiles):
+    '''Write each <section> from <cfg_file> to co responding <outfile>.
+    '''
+    cfg = config(cfg_file)
+    for sec,ofn in zip(sections,outfiles):
+        print 'SECTION:',sec,ofn
+        params = cfg[sec]
+        write_param_file(ofn, **params)
+    return
+
+def nop2nod(nopfile, nodfile):
+    params = read_param_file(nopfile)
+    params['data'] = nodfile
+    params['info'] = '/dev/null'
+    call(**params)
+    return
+
 def find_nuosc_exec():
     to_check = os.environ['PATH'].split(':')
     for maybe_dir in to_check:
@@ -42,27 +88,30 @@ def write_param_file(filename, **kwds):
     return
 
 
-OscProb = namedtuple('OscProb', 'en bl a b c enl bll')
-OscProbSet = namedtuple('OscProbSet', 'data en bl enl bll')
 def read_data(filename):
     '''
     Read a nuosc data file and provide the data as an OscProbSet
     '''
+    with open(filename) as fp:
+        return datafy(fp.readlines())
+
+def datafy(lines):
+    '''
+    Parse lines as returned by the nuosc executable into an OscProbSet
+    '''
     sets = [set() for x in range(5)]
 
-    with open(filename) as fp:
-        for line in fp.readlines():
-            line = line.strip()
-            if not line:
-                continue
-            parts = OscProb(*[float(x.strip()) for x in line.split()])
-            sets[0].add(parts)
-            sets[1].add(parts[0])
-            sets[2].add(parts[1])
-            sets[3].add(parts[5])
-            sets[4].add(parts[6])
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        parts = OscProb(*[float(x.strip()) for x in line.split()])
+        sets[0].add(parts)
+        sets[1].add(parts[0])
+        sets[2].add(parts[1])
+        sets[3].add(parts[5])
+        sets[4].add(parts[6])
     return OscProbSet(*sets)
-    
 
 def call(**kwds):
     '''Generate oscillation probabilities using the nuosc executable.

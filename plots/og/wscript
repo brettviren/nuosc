@@ -1,0 +1,50 @@
+# -*- python -*-
+
+import os
+import sys
+
+top = '.'
+out = 'out'
+
+def configure(cfg):
+    dist = cfg.path.parent.parent.abspath()
+    sys.path.insert(0, os.path.join(dist,'python'))
+    import nuosc
+
+    cfg.env.config_file = 'og.cfg'
+    cfg.env.configurations = nuosc.config_sections(cfg.env.config_file)
+
+    return
+
+
+def build(bld):
+    import nuosc
+
+    nops = [x+'.nop' for x in bld.env.configurations]
+
+    # transform one configuration file into many .nop files
+    def cfg2nops(task):
+        nuosc.cfg2nops(task.inputs[0].abspath(), bld.env.configurations,
+                       [x.abspath() for x in task.outputs])
+    bld(rule = cfg2nops, source = bld.env.config_file, target = nops)
+
+    # transform a nop file into a nod file 
+    def nop2nod(task):
+        nuosc.nop2nod(task.inputs[0].abspath(),
+                      task.outputs[0].abspath())
+    from waflib import TaskGen
+    TaskGen.declare_chain(name = 'nop2nod', rule = nop2nod,
+                          ext_in = '.nop', ext_out = '.nod', 
+                          reentrant = False)
+    bld(source = nops)
+        
+    def plot_oscillogram(task):
+        import plot
+        plot.oscillogram(task.inputs[0].abspath(),
+                         task.inputs[1].abspath(),
+                         task.outputs[0].abspath())
+    for nop, cfg in zip(nops, bld.env.configurations):
+        if cfg.startswith('oscillogram'):
+            bld(rule = plot_oscillogram,
+                source = [nop, nop.replace('.nop','.nod')],
+                target = nop.replace('.nop','.pdf'))
