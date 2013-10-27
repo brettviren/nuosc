@@ -1,0 +1,82 @@
+#+TITLE: Making Plots With =nuosc=
+
+This package does not place limits on how to use it to make plots.  It does come with some PyROOT Python/ROOT support code and some examples are in the [[../test/]] and [[../plots/]] directory.  
+
+* Set up
+
+The plot examples rely on 
+
+ - ROOT
+ - The =nuosc= executable
+ - The =nuosc= Python module
+
+Setting up ROOT is outside the scope of nuosc but can usually be done via:
+
+#+BEGIN_EXAMPLE
+$ source /path/to/rootsys/bin/thisroot.sh
+#+END_EXAMPLE
+
+The =nuosc= executable and Python module needs to be put in =PATH= and =PYTHONPATH= respectively.  The =nuosc= source comes with a trivial setup script that can do this for you and relies on keeping the source around.  It's just for development.  (FIXME: improve this for installation).
+
+#+BEGIN_EXAMPLE
+$ cd /path/to/nuosc
+$ source sourceme.sh
+$ nuosc_build
+#+END_EXAMPLE
+
+* Oscillogram
+
+An "oscillogram" plot shows neutrino oscillation probability as a function of both energy and baseline.  The probability is usually displayed as a color.  An example is in [[../plots/og/]].  After setting up as above the plots can be built like:
+
+#+BEGIN_EXAMPLE
+$ cd /path/to/nuosc/plots/og
+$ waf configure build
+$ ls out/
+#+END_EXAMPLE
+
+The build of these plots is driven by the [[../plots/og/og.cfg]].  
+
+One example oscillogram output is:
+
+[[./og/oscillogram_nu_no.svg]]
+
+A few things of note about this plotting code.  They pertain to optimizing the visual quality and minimizing file size.  
+
+** Log scale
+
+These plots are shown with a log scale for the energy axis.  This is good to show the features at low energy where a lot of action is.  However, it presents a technical challenge.  
+
+The typical way to achieve this is to create a linear-scale histogram and use ROOT's =SetLogy()= on the =TCanvas= object.  This is easy and usually works fine.  However, in this case the high-energy part has relatively little features compared to the low energy part.  As a cons sequence the plot devotes far more bins to the region where they are not needed.  In order to avoid bin aliasing in the low energy range one has to greatly increase the overall bin count.  This leads to very large file sizes.  A 1MB PDF will still have significantly visible binning at low energy.  A factor of 5 or 10 more would be needed.  
+
+The alternative taken here is to implement the log scale in the data itself, plot it linearly and then muck with the energy axis to make it have log-oriented labels.  This is done by using the configuration item (or equivalent =nuosc= command line option):
+
+#+BEGIN_EXAMPLE
+energy = log:-1,1,0.01
+#+END_EXAMPLE
+
+The labels are doctored up using the =SetBinLabel()= method of ROOT's =TAxis= object for the energy axis.  This has to be done carefully as setting the label directly does not care what the actual value is.  Off-by-one and rounding errors are easy to make.
+
+** Draw options =CONTZ= vs. =COLZ=
+
+With this kind of plot there are two likely candidates for plotting options.  A contour (=CONTZ=) or color binned (=COLZ=) plot.  
+
+The =COLZ= option is in some ways best as it presents the exact underlying binned data.  However, in order resolve the fine features at low energies one must use many bins, even when using the improvements with the [[Log scale]] method above.  Resulting vector PDF/SVG files are still overly large.  One can =Print()= to PNG but this introduces other quality problems as there will be aliasing between the fine bins of the histogram and the comparable bins of the low-level PNG pixels.
+
+The =CONTZ= option fixes this by reducing the number of vector graphical elements stored in the PDF or SVG at the expense of loss of per-bin info.  For general understanding this is acceptable.  If someone wants to underlying exact probability they can run =nuosc= themselves. 
+
+So, the =CONTZ= option is used.  But, this introduces a few technical issues:
+
+** Number of colors
+
+When first making this plot I was using a custom color palette with a non-standard number of colors (40) which led to some plotting artifacts.  These caused the low-energy/high-baseline region to be left empty and not drawn.  Moving back to the default is 20 colors removed the problem.  
+
+** Zero/white color
+
+The =CONTZ= plot will apply a lower-bound threshold and paint that Z-bin white.  Painting zero bins white is default ROOT behavior and I think very desirable.  However, in the case of a =CONTZ= plot this lowest z-bin is not actually zero so I feel it is wrong behavior.  After some searching there is a simple enough work-around:
+
+#+BEGIN_SRC python :noeval
+  c = ROOT.TCanvas(...)
+  c.SetFrameFillColor(ROOT.gStyle.GetColorPalette(1))
+#+END_SRC
+
+

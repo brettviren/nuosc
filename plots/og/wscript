@@ -48,3 +48,7 @@ def build(bld):
             bld(rule = plot_oscillogram,
                 source = [nop, nop.replace('.nop','.nod')],
                 target = nop.replace('.nop','.pdf'))
+            bld(rule = plot_oscillogram,
+                source = [nop, nop.replace('.nop','.nod')],
+                target = nop.replace('.nop','.svg'))
+

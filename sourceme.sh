@@ -14,4 +14,5 @@ nuosc_build () {
 export PYTHONPATH=$nuosc_dir/python:$PYTHONPATH
 PATH=$nuosc_dir/install/bin:$PATH
 
+alias waf=$nuosc_dir/waf
     
