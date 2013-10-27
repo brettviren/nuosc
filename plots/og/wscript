@@ -38,15 +38,31 @@ def build(bld):
                           reentrant = False)
     bld(source = nops)
         
-    def plot_oscillogram(task):
-        import plot
-        plot.oscillogram(task.inputs[0].abspath(),
-                         task.inputs[1].abspath(),
-                         task.outputs[0].abspath())
+    print 'PARALLEL with %d jobs' % bld.jobs
+
+    def plot_oscillogram_external(task):
+        cmd = ['python'] + [x.abspath() for x in task.inputs]
+        cmd.append(task.outputs[0].abspath())
+        task.exec_command(' '.join(cmd))
+
     for nop, cfg in zip(nops, bld.env.configurations):
-        if cfg.startswith('oscillogram'):
-            for ext in ['.pdf','.svg','.png']:
-                bld(rule = plot_oscillogram,
-                    source = [nop, nop.replace('.nop','.nod')],
+        for ext in ['.pdf','.svg','.png']:
+            if cfg.startswith('oscillogram_'):
+                bld(rule = plot_oscillogram_external,
+                    source = ['plot_og.py']+[nop, nop.replace('.nop','.nod')],
                     target = nop.replace('.nop', ext))
 
+    def plot_energy(task):
+        cmd = ['python', task.inputs[0].abspath(), task.outputs[0].abspath()] 
+        cmd += [x.abspath() for x in task.inputs[1:]]
+        task.exec_command(' '.join(cmd))        
+    for nuanu in ['nu','anu']:
+        for noro in ['no','ro']:
+            for ext in ['.pdf','.svg','.png']:
+                name = 'energy_%s_%s' % (nuanu, noro)
+                cfgs = [x for x in bld.env.configurations if name in x]
+                en_nops = [c+'.nop' for c in cfgs]
+                en_nods = [c+'.nod' for c in cfgs]
+                bld(rule = plot_energy,
+                    source = ['plot_en.py'] + en_nops + en_nods,
+                    target = name + ext)

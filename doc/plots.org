@@ -24,9 +24,10 @@ $ source sourceme.sh
 $ nuosc_build
 #+END_EXAMPLE
 
+
 * Oscillogram
 
-An "oscillogram" plot shows neutrino oscillation probability as a function of both energy and baseline.  The probability is usually displayed as a color.  An example is in [[../plots/og/]].  After setting up as above the plots can be built like:
+An "oscillogram" plot shows neutrino oscillation probability as a function of both energy and baseline.  The probability is usually displayed as a color.  An example is in [[../plots/og/]]plot_og.py.  After setting up as above the plots can be built like:
 
 #+BEGIN_EXAMPLE
 $ cd /path/to/nuosc/plots/og
@@ -83,5 +84,65 @@ The =CONTZ= plot will apply a lower-bound threshold and paint that Z-bin white. 
   c = ROOT.TCanvas(...)
   c.SetFrameFillColor(ROOT.gStyle.GetColorPalette(1))
 #+END_SRC
+
+
+
+* Probability Spectrum
+
+A probability spectrum with a few values of \delta_{CP} and with zero \theta_{13} is also created with the plots described above.  These are made with the =../plots/og/plot_en.py= script and are meant to provide "slices" along constant baseline of the oscillograms suitable for side-by-side viewing.
+
+They make use of the difficult =hbar= drawing option to make the probability histogram get plotted sideways.  This does an implicit switcheroo on the axis but the same kind of log/lin axis munging is done as above.  The switcheroo only affects histograms drawn with =hbar=.  The solar term is a TGraph which must be explicitly switcherooed.
+
+[[./og/oscillogram_nu_no.png]][[./og/energy_nu_no.png]]
+
+
+
+* Automating plots with =waf=
+
+This package has a few build mechanism.  The latest is [[https://code.google.com/p/waf/][waf]].  This is used to automate building the tests and plots.  Some issues to be aware of with ROOT to exploit this powerful tool.
+
+** Inputs and outputs
+
+Waf is best used when jobs can be thought of as a process (rule) taking input files and producing output files.  This requires structuring the high-level layers of the plotting code to match.  Each well defined plot type provides a =.py= file with a =main()= method that and a bit of code at the end:
+
+#+BEGIN_SRC python :noeval
+  if '__main__' == __name__:
+      import sys
+      main(*sys.argv[1:])
+#+END_SRC
+
+** Parallel
+
+PyROOT is Python, waf is Python.  It's tempting to call PyROOT code directly from waf's =wscript= file.  Reasons to do this:
+
+ - simpler code
+ - avoid main programs
+ - avoid overhead of loading ROOT multiple times
+
+However, due to ROOT not being thread-safe and waf liking to run rules in parallel it is likely this will lead to problems such as segmentation violations.  To deal with that, either don't call PyROOT code directly and instead start new Python instances or force serial processing with.
+
+#+BEGIN_EXAMPLE
+$ waf -j1
+#+END_EXAMPLE
+
+The [[Oscillogram]] plots were used to check the relative trade-offs in time between serial and parallel.  For each test the probability data files were not regenerated.
+
+ - serial :: a single, shared instance of (Py)ROOT instantiated for all jobs
+ - parallel :: one (Py)ROOT executable image for each job
+
+|----------------+------------|
+| serial         | 11 seconds |
+|----------------+------------|
+| parallel (-j2) | 10 seconds |
+|----------------+------------|
+| parallel (-j4) | 8 seconds  |
+|----------------+------------|
+| parallel (-j8) | 8 seconds  |
+|----------------+------------|
+
+The test-to-test fluctuation was not carefully studied but somewhat less than 1 second.  This test machine was a 4-core i5-2520M 2.5GHz in 4GB RAM.  With only this modest 4-way system the overhead of starting up ROOT is less important than the gains in parallelism.
+
+The conclusion here is that the best strategy is to keep the thread-unsafe PyROOT code out of the =wscript=, start up individual executable images for each job and let all the CPUs get hot.
+
 
 

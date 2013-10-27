@@ -2,10 +2,15 @@
 '''
 Make an "oscillogram" plot from nuosc data
 '''
-
-import nuosc
-import ROOT
 import math
+import nuosc
+
+import common
+canvas = common.canvas
+ROOT = common.ROOT
+
+from common import get_axis_desc, set_energy_axis_label, nop_params
+
 
 def enlbbl(opd, nu):
     '''Plot a ROOT TH2F using the .enl vs. .bbl of the osc prob data <opd>
@@ -33,26 +38,6 @@ def make_og(nod, fnu=1):
         h.Fill(d.bll, d.enl, d[1+fnu])
     return h
     
-
-nu_num2rlatex = { 
-    '1':'#nu_{e}',        '2':'#nu_{#mu}',        '3':'#nu_{#tau}',
-    '+1':'#nu_{e}',       '+2':'#nu_{#mu}',       '+3':'#nu_{#tau}',
-    '-1':'#bar{#nu}_{e}', '-2':'#bar{#nu}_{#mu}', '-3':'#bar{#nu}_{#tau}'}
-
-
-def nop_params(nop, fnu):
-    fnu = str(fnu)
-    inu = nop['neutrino']
-    if inu.startswith('-') and not fnu.startswith('-'):
-        fnu = '-' + fnu
-    if nop['atm'].startswith('-'):
-        hier = 'IH'
-    else:
-        hier = 'NH'
-    return dict(nop, inu=inu, fnu=fnu, hier=hier,
-                inu_rlatex = nu_num2rlatex[inu],
-                fnu_rlatex = nu_num2rlatex[fnu])
-
 def title_og(h, **params):
     tit = 'P(%(inu_rlatex)s #rightarrow %(fnu_rlatex)s), %(hier)s, #delta_{cp}=%(delta)s'
     h.SetTitle(tit % params)
@@ -65,11 +50,6 @@ def title_og(h, **params):
     h.SetStats(0)
 
 
-def get_axis_desc(a):
-    ny = a.GetNbins()
-    bot = round(a.GetBinLowEdge(0))
-    top = round(a.GetBinUpEdge(ny))
-    return ny,bot,top
 
 def make_base_line(h, bl=1300):
     y = h.GetYaxis()
@@ -90,7 +70,7 @@ def make_vac_osc(h, lovere):
     g.SetLineWidth(2)
     return g
 
-def shape_linlog_og(h, blrange=(100,3000), erange=(0.2,10), zrange=(0,0.2)):
+def shape_linlog_og(h, blrange=(100,3000), erange=(-1,1), zrange=(0,0.2)):
     '''
     Shape the histogram for an explicitly log energy scale but a linear plot.
     '''
@@ -98,19 +78,18 @@ def shape_linlog_og(h, blrange=(100,3000), erange=(0.2,10), zrange=(0,0.2)):
     x.SetRangeUser(*blrange)
 
     y = h.GetYaxis()
-    ny,bot,top = get_axis_desc(y)
-    y.SetBinLabel(1,str(math.pow(10, bot)))
-    y.SetBinLabel(ny/2, str(math.pow(10, 0.5*(top+bot))))
-    y.SetBinLabel(ny, str(math.pow(10, top)))
+    y.SetRangeUser(*erange)
+    set_energy_axis_label(y)
 
     z = h.GetZaxis()
     z.SetRangeUser(*zrange)
     
 def make_canvas_og():
-    c = ROOT.TCanvas("c","canvas",500,500)
-    c.SetFrameFillColor(ROOT.gStyle.GetColorPalette(1))
-    c.SetRightMargin(0.12)             
-    return c
+    #c = ROOT.TCanvas("c","canvas",500,500)
+    canvas.Clear()
+    canvas.SetFrameFillColor(ROOT.gStyle.GetColorPalette(1))
+    canvas.SetRightMargin(0.12)             
+    return canvas
 
 def make_text(text, x, y, a=0):
     w = ROOT.TLatex()
@@ -121,7 +100,7 @@ def make_text(text, x, y, a=0):
     return w
 
 
-def oscillogram(nop, nod, out, fnu=1):
+def main(nop, nod, out, fnu=1):
     '''
     Using parameters in nop and data in nod, print a plot to out
     '''
@@ -150,6 +129,7 @@ def oscillogram(nop, nod, out, fnu=1):
     
     c.Print(out)
 
+
 if '__main__' == __name__:
     import sys
-    oscillogram(*sys.argv[1:])
+    main(*sys.argv[1:])
