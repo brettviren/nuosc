@@ -6,7 +6,7 @@ This package does not place limits on how to use it to make plots.  It does come
 
 The plot examples rely on 
 
- - ROOT
+ - [[http://root.cern.ch/][ROOT]]
  - The =nuosc= executable
  - The =nuosc= Python module
 
@@ -27,7 +27,7 @@ $ nuosc_build
 
 * Oscillogram
 
-An "oscillogram" plot shows neutrino oscillation probability as a function of both energy and baseline.  The probability is usually displayed as a color.  An example is in [[../plots/og/]]plot_og.py.  After setting up as above the plots can be built like:
+An "oscillogram" plot shows neutrino oscillation probability as a function of both energy and baseline.  The probability is usually displayed as a color.  An example is in [[../plots/og/plot_og.py]].  After setting up as above the plots can be built like:
 
 #+BEGIN_EXAMPLE
 $ cd /path/to/nuosc/plots/og
@@ -41,7 +41,7 @@ One example oscillogram output is:
 
 [[./og/oscillogram_nu_no.svg]]
 
-Browsing this on github may not allow the SVG to be rendered so a PNG is also included.  PNGs are not good formats for this plot as described below.
+If you are browsing this on github you may not see the SVG.  Next is a PNG of the same plot. Note that PNGs are not good formats for this plot as described below.
 
 [[./og/oscillogram_nu_no.png]]
 
@@ -52,7 +52,7 @@ A few things of note about this plotting code.  They pertain to optimizing the v
 
 These plots are shown with a log scale for the energy axis.  This is good to show the features at low energy where a lot of action is.  However, it presents a technical challenge.  
 
-The typical way to achieve this is to create a linear-scale histogram and use ROOT's =SetLogy()= on the =TCanvas= object.  This is easy and usually works fine.  However, in this case the high-energy part has relatively little features compared to the low energy part.  As a cons sequence the plot devotes far more bins to the region where they are not needed.  In order to avoid bin aliasing in the low energy range one has to greatly increase the overall bin count.  This leads to very large file sizes.  A 1MB PDF will still have significantly visible binning at low energy.  A factor of 5 or 10 more would be needed.  
+The typical way to achieve this is to create a linear-scale histogram and use ROOT's =SetLogy()= on the =TCanvas= object.  This is easy and usually works fine.  However, in this case the high-energy part has relatively little features compared to the low energy part and would receive a disproportionate amount of bins while the feature full energy range would have a dearth of bins.  In order to avoid bin aliasing in the low energy range one has to greatly increase the overall bin count.  This leads to very large file sizes.  A 1MB PDF will still have significantly visible binning "jaggies" at low energy.  A factor of 5 or 10 more would be needed.  
 
 The alternative taken here is to implement the log scale in the data itself, plot it linearly and then muck with the energy axis to make it have log-oriented labels.  This is done by using the configuration item (or equivalent =nuosc= command line option):
 
@@ -60,13 +60,13 @@ The alternative taken here is to implement the log scale in the data itself, plo
 energy = log:-1,1,0.01
 #+END_EXAMPLE
 
-The labels are doctored up using the =SetBinLabel()= method of ROOT's =TAxis= object for the energy axis.  This has to be done carefully as setting the label directly does not care what the actual value is.  Off-by-one and rounding errors are easy to make.
+Left along, ROOT will show an axis label of the raw data which will be the base-10 exponent.  Giving the actual energy is more convenient.  This requires that the labels be explicitly set using the =SetBinLabel()= method of ROOT's =TAxis= object for the energy axis.  This has to be done carefully as when setting the labels directly it's up to the user to get them correct.  Off-by-one and rounding errors are easy to make.
 
 ** Draw options =CONTZ= vs. =COLZ=
 
 With this kind of plot there are two likely candidates for plotting options.  A contour (=CONTZ=) or color binned (=COLZ=) plot.  
 
-The =COLZ= option is in some ways best as it presents the exact underlying binned data.  However, in order resolve the fine features at low energies one must use many bins, even when using the improvements with the [[Log scale]] method above.  Resulting vector PDF/SVG files are still overly large.  One can =Print()= to PNG but this introduces other quality problems as there will be aliasing between the fine bins of the histogram and the comparable bins of the low-level PNG pixels.
+The =COLZ= option is in some ways best as it presents the exact underlying binned data.  However, in order resolve the fine features at low energies one must use many bins, even when using the improvements with the [[Log scale]] method above.  Resulting vector PDF/SVG files are still overly large.  One can =Print()= to PNG but this introduces other quality problems as there will be aliasing between the fine bins of the histogram and the comparable bins of the low-level PNG pixels (as can be seen in the plots shown).
 
 The =CONTZ= option fixes this by reducing the number of vector graphical elements stored in the PDF or SVG at the expense of loss of per-bin info.  For general understanding this is acceptable.  If someone wants to underlying exact probability they can run =nuosc= themselves. 
 
@@ -74,36 +74,36 @@ So, the =CONTZ= option is used.  But, this introduces a few technical issues:
 
 ** Number of colors
 
-When first making this plot I was using a custom color palette with a non-standard number of colors (40) which led to some plotting artifacts.  These caused the low-energy/high-baseline region to be left empty and not drawn.  Moving back to the default is 20 colors removed the problem.  
+When first making this plot I was using a custom color palette with a non-standard number of colors (40) which led to some plotting artifacts.  These caused the low-energy/high-baseline region to be left empty and not drawn.  Moving back to the default is 20 colors removed the problem.  I did not investigate if this was a ROOT bug or a misused feature.
 
 ** Zero/white color
 
-The =CONTZ= plot will apply a lower-bound threshold and paint that Z-bin white.  Painting zero bins white is default ROOT behavior and I think very desirable.  However, in the case of a =CONTZ= plot this lowest z-bin is not actually zero so I feel it is wrong behavior.  After some searching there is a simple enough work-around:
+The =CONTZ= plot will apply a lower-bound threshold and paint that Z-bin white.  Painting zero bins white is default ROOT behavior and I think very desirable.  However, in the case of a =CONTZ= plot this lowest z-bin is not actually zero so I feel it is wrong behavior.  After some searching there is a simple enough work-around to first color the frame background to match the lowest z-bin color:
 
 #+BEGIN_SRC python :noeval
   c = ROOT.TCanvas(...)
   c.SetFrameFillColor(ROOT.gStyle.GetColorPalette(1))
 #+END_SRC
 
-
+Of course this will present a lie if there are indeed any unfilled (or negative) bins.
 
 * Probability Spectrum
 
 A probability spectrum with a few values of \delta_{CP} and with zero \theta_{13} is also created with the plots described above.  These are made with the =../plots/og/plot_en.py= script and are meant to provide "slices" along constant baseline of the oscillograms suitable for side-by-side viewing.
 
-They make use of the difficult =hbar= drawing option to make the probability histogram get plotted sideways.  This does an implicit switcheroo on the axis but the same kind of log/lin axis munging is done as above.  The switcheroo only affects histograms drawn with =hbar=.  The solar term is a TGraph which must be explicitly switcherooed.
+They make use of the difficult =hbar= drawing option to make the probability histogram get plotted sideways so that the Y-axis matches that of the oscillogram.  This does an implicit switcheroo on the axis but the same kind of log/lin axis munging is done as above.  The switcheroo only affects histograms drawn with =hbar=.  The solar term is a =TGraph= which must be explicitly switcherooed.
 
-[[./og/oscillogram_nu_no.png]][[./og/energy_nu_no.png]]
+[[./og/energy_nu_no.png]]
 
 
 
 * Automating plots with =waf=
 
-This package has a few build mechanism.  The latest is [[https://code.google.com/p/waf/][waf]].  This is used to automate building the tests and plots.  Some issues to be aware of with ROOT to exploit this powerful tool.
+This package has a few build mechanism.  The latest is [[https://code.google.com/p/waf/][waf]] which is also used to automate building the some of tests and plots.  There are some issues to be aware of when using ROOT and waf.
 
 ** Inputs and outputs
 
-Waf is best used when jobs can be thought of as a process (rule) taking input files and producing output files.  This requires structuring the high-level layers of the plotting code to match.  Each well defined plot type provides a =.py= file with a =main()= method that and a bit of code at the end:
+Waf is best used when jobs can be thought of as a process (rule) taking input files and producing output files.  This requires structuring the high-level layers of the plotting code to match.  Each well defined plot type provides a =.py= file with a =main()= method that accepts a argument list and a bit of code at the end to translate the command line to it arguments:
 
 #+BEGIN_SRC python :noeval
   if '__main__' == __name__:
@@ -115,23 +115,27 @@ Waf is best used when jobs can be thought of as a process (rule) taking input fi
 
 PyROOT is Python, waf is Python.  It's tempting to call PyROOT code directly from waf's =wscript= file.  Reasons to do this:
 
- - simpler code
- - avoid main programs
- - avoid overhead of loading ROOT multiple times
+ - simpler code as one could skip the command line interface described above
+ - avoid overhead of loading ROOT and Python multiple times
+ - hide away all the plotting code in a module in Python's path
 
-However, due to ROOT not being thread-safe and waf liking to run rules in parallel it is likely this will lead to problems such as segmentation violations.  To deal with that, either don't call PyROOT code directly and instead start new Python instances or force serial processing with.
+However, due to ROOT not being thread-safe and waf liking to run its rules in parallel, it is likely trouble will befall, typically in the form of segfaults inside ROOT code.  To deal with this, either one can not call PyROOT code directly and instead start new Python instances or one must force waf to run serially.  This latter can be done simply like:
 
 #+BEGIN_EXAMPLE
 $ waf -j1
 #+END_EXAMPLE
 
-The [[Oscillogram]] plots were used to check the relative trade-offs in time between serial and parallel.  For each test the probability data files were not regenerated.
+The [[Oscillogram]] plots (12 jobs/plots total) were used to check the relative trade-offs in time between these two approaches.  For each test the probability data files were not regenerated so only the parts involving ROOT plotting code contributed to the results.
 
- - serial :: a single, shared instance of (Py)ROOT instantiated for all jobs
- - parallel :: one (Py)ROOT executable image for each job
+ - serial :: a single, shared instance of (Py)ROOT instantiated once for all jobs
+ - parallel :: one external (Py)ROOT executable image for each job
 
 |----------------+------------|
+| Processing     | Time       |
+|----------------+------------|
 | serial         | 11 seconds |
+|----------------+------------|
+| parallel (-j1) | 17 seconds |
 |----------------+------------|
 | parallel (-j2) | 10 seconds |
 |----------------+------------|
@@ -140,9 +144,9 @@ The [[Oscillogram]] plots were used to check the relative trade-offs in time bet
 | parallel (-j8) | 8 seconds  |
 |----------------+------------|
 
-The test-to-test fluctuation was not carefully studied but somewhat less than 1 second.  This test machine was a 4-core i5-2520M 2.5GHz in 4GB RAM.  With only this modest 4-way system the overhead of starting up ROOT is less important than the gains in parallelism.
+The test-to-test fluctuation was not carefully studied but was somewhat less than 1 second.  The test machine was a 4-core i5-2520M 2.5GHz in 4GB RAM.  With only this modest 4-way system the overhead of starting up ROOT is less important than the gains in parallelism.
 
-The conclusion here is that the best strategy is to keep the thread-unsafe PyROOT code out of the =wscript=, start up individual executable images for each job and let all the CPUs get hot.
+The conclusion here is that the best strategy is to keep the thread-unsafe PyROOT code out of the =wscript=, start up individual executable images for each job and let all the CPUs get hot.  If still running on a single-core machine then a shared ROOT instance and serial processing is preferred.
 
 
 
