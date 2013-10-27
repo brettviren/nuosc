@@ -40,6 +40,11 @@ One example oscillogram output is:
 
 [[./og/oscillogram_nu_no.svg]]
 
+Browsing this on github may not allow the SVG to be rendered so a PNG is also included.  PNGs are not good formats for this plot as described below.
+
+[[./og/oscillogram_nu_no.png]]
+
+
 A few things of note about this plotting code.  They pertain to optimizing the visual quality and minimizing file size.  
 
 ** Log scale

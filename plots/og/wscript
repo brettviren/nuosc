@@ -45,10 +45,8 @@ def build(bld):
                          task.outputs[0].abspath())
     for nop, cfg in zip(nops, bld.env.configurations):
         if cfg.startswith('oscillogram'):
-            bld(rule = plot_oscillogram,
-                source = [nop, nop.replace('.nop','.nod')],
-                target = nop.replace('.nop','.pdf'))
-            bld(rule = plot_oscillogram,
-                source = [nop, nop.replace('.nop','.nod')],
-                target = nop.replace('.nop','.svg'))
+            for ext in ['.pdf','.svg','.png']:
+                bld(rule = plot_oscillogram,
+                    source = [nop, nop.replace('.nop','.nod')],
+                    target = nop.replace('.nop', ext))
 
