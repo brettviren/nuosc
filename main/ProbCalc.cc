@@ -84,7 +84,10 @@ class PCLutCalc : public ProbCalc {
 public:
     PCLutCalc(string /*ignored for now*/, string filename) {
 	ifstream fstr(filename.c_str());
-	assert (!fstr);
+	if (!fstr) {
+	    cerr << "Failed to open file: " << filename << endl;
+	}
+	assert (fstr);
 
 	double x;
 	while (fstr>>x) {

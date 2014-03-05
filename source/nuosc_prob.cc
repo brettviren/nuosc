@@ -262,7 +262,7 @@ ComplexVector nuosc_prob_lookup_matrix(ComplexVector initial_neutrino,
         if (i < n-1)
             l_f = poslu[i] + 0.5*(poslu[i+1] - poslu[i]);
 
-        cerr << "[ " << l_i << " " << l_f << " ]\n";
+        //cerr << "[ " << l_i << " " << l_f << " ]\n";
         vec = nuosc_prob_constant_matrix(vec,op,energy,l_f - l_i,denlu[i]);
     }
 //    cerr << "nu=" << vec << endl;

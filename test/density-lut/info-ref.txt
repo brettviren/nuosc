@@ -1,0 +1,15 @@
+nu_mu
+dms21   = 5e-05
+dms31   = 0.0025
+theta12 = 0.553574
+theta23 = 0.785398
+theta13 = 0.160875
+ss2t12  = 0.8
+ss2t23  = 1
+ss2t13  = 0.1
+deltacp = -0
+calculation = (matrix)
+baseline = one:11436
+energy = log:-1,4,0.05
+density = lut:density_lut.txt
+
