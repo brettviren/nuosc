@@ -61,11 +61,11 @@ const char* desc[] = {
 
     // sol
     "\tSet the solar delta-m^2 (dm^2_21).\n"
-    "\tUnits are eV^2, default is 2.5e-3 eV^2\n",
+    "\tUnits are eV^2, default is 5.0e-5 eV^2\n",
 
     // atm
     "\tSet the atmospheric delta-m^2 (dm^2_31).\n"
-    "\tUnits are eV^2, default is 5.0e-5 eV^2\n",
+    "\tUnits are eV^2, default is 2.5e-3 eV^2\n",
     
     // delta
     "\tSet the CP phase angle.\n"
